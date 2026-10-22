@@ -50,7 +50,7 @@ export function DiscoveryPage() {
     setKeywords('used clothing importer'); setProductType('mixed'); setCountry('United Kingdom');
     setLanguage('Any'); setPurchaseSignals(true); setExcludeRetailers(true); setExtractPageText(true);
     setRequiredTerms(['wholesale']); setTermInput(''); setExcludedDomains(''); setResultLimit(50);
-    setBudget(5); setTimeRange('Any time'); setPreviewReady(false); setTaskStarted(false);
+    setBudget(5); setTimeRange('Any time'); setPreviewReady(false);
   };
   const addTerm = () => {
     const term = termInput.trim();
