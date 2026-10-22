@@ -69,22 +69,21 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <a className="skip-link" href="#main-content">Skip to main content</a>
-      <header className="app-header">
-        <div className="app-header__brand">
-          <span className="brand-mark" aria-hidden="true">U</span>
-          <span className="brand-name">URANUS <strong>CORTEX</strong></span>
-          <span className="brand-divider" aria-hidden="true" />
-          <span className="brand-workspace">Buyer intelligence</span>
-        </div>
-        <div className="app-header__actions">
+      <Header aria-label="Uranus Cortex">
+        <SkipToContent />
+        <HeaderName href="#main-content" prefix="URANUS">Cortex</HeaderName>
+        <HeaderGlobalBar>
           <Tag type="blue">Prototype</Tag>
-          <Button kind="ghost" size="md" renderIcon={Help} iconDescription="Help" hasIconOnly aria-label="Help" />
-          <Button kind="ghost" size="md" renderIcon={ChevronDown} onClick={() => setMobileNavOpen((open) => !open)} className="mobile-menu-trigger">
-            Menu
-          </Button>
-        </div>
-      </header>
+          <HeaderGlobalAction aria-label="Help" tooltipAlignment="end" onClick={() => {}}>
+            <Help size={20} />
+          </HeaderGlobalAction>
+          <HeaderMenuButton
+            aria-label="Toggle navigation"
+            isActive={mobileNavOpen}
+            onClick={() => setMobileNavOpen((open) => !open)}
+          />
+        </HeaderGlobalBar>
+      </Header>
 
       <div className="app-frame">
         <SideNav
