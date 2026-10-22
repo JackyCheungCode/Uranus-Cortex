@@ -11,8 +11,8 @@ describe('App', () => {
   });
 
   it('provides semantic main content and a review note', () => {
-    render(<App />);
-    expect(screen.getByRole('main', { name: 'Uranus Cortex application' })).toBeInTheDocument();
+    const { container } = render(<App />);
+    expect(container.querySelector('main.app-shell[aria-label="Uranus Cortex application"]')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Built to be reviewed' })).toBeInTheDocument();
   });
 });
