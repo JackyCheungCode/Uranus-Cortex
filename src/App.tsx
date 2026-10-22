@@ -10,10 +10,10 @@ import {
   Settings,
   UserMultiple,
 } from '@carbon/icons-react';
-import { Button, Column, Grid, Tag, Tile } from '@carbon/react';
+import { Button, Tag } from '@carbon/react';
 import { useState } from 'react';
-import { DashboardPage } from './modules/dashboard/DashboardPage';
-import { DiscoveryPage } from './modules/discovery/DiscoveryPage';
+import { DashboardPage } from './modules/dashboard';
+import { DiscoveryPage } from './modules/discovery';
 import './styles.css';
 
 type PageId = 'dashboard' | 'discovery' | 'buyers' | 'crm' | 'integrations' | 'settings';
