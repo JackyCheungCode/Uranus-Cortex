@@ -9,7 +9,7 @@ const foundationChecks = [
 
 export default function App() {
   return (
-    <main className="app-shell">
+    <main className="app-shell" aria-label="Uranus Cortex application">
       <header className="app-header">
         <div className="app-header__brand">
           <Code size={24} aria-hidden="true" />
