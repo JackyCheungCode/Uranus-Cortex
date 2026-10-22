@@ -5,14 +5,14 @@ import App from './App';
 describe('App shell', () => {
   it('renders the application navigation and dashboard', () => {
     render(<App />);
-    expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
+    expect(screen.getByRole('complementary', { name: 'Main navigation' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Find the right buyers.' })).toBeInTheDocument();
     expect(screen.getByText(/Mock data only/)).toBeInTheDocument();
   });
 
   it('navigates to the interactive buyer discovery prototype', () => {
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'Buyer discovery' }));
+    fireEvent.click(screen.getByRole('button', { name: /Buyer discovery/ }));
     expect(screen.getByRole('heading', { name: 'Buyer discovery' })).toBeInTheDocument();
     expect(screen.getByLabelText('Core keywords')).toHaveValue('used clothing importer');
   });
