@@ -1,5 +1,5 @@
-import { Add, Close, Search, TrashCan } from '@carbon/icons-react';
-import { Button, Checkbox, Column, Grid, InlineNotification, Select, SelectItem, Stack, TextInput, Tile } from '@carbon/react';
+import { Add, Search, TrashCan } from '@carbon/icons-react';
+import { Button, Checkbox, Column, Grid, InlineNotification, Select, SelectItem, Stack, Tag, TextInput, Tile } from '@carbon/react';
 import { useMemo, useState } from 'react';
 
 type ProductType = 'mixed' | 'sorted';
@@ -62,12 +62,11 @@ export function DiscoveryPage() {
                 <Checkbox id="exclude-retailers" labelText="Exclude retail and fashion-only results" checked={excludeRetailers} onChange={(_, data) => setExcludeRetailers(data.checked)} />
               </div>
               <div className="extra-terms">
-                <label className="cds--label" htmlFor="extra-term">Additional required phrase</label>
                 <div className="extra-terms__input">
                   <TextInput id="extra-term" labelText="Additional required phrase" hideLabel value={termInput} onChange={(event) => setTermInput(event.currentTarget.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addTerm(); } }} placeholder="e.g. import license" />
                   <Button kind="secondary" hasIconOnly renderIcon={Add} iconDescription="Add required phrase" aria-label="Add required phrase" onClick={addTerm} />
                 </div>
-                {extraTerms.length > 0 && <div className="term-tags">{extraTerms.map((term) => <span className="term-tag" key={term}>{term}<button type="button" aria-label={`Remove ${term}`} onClick={() => setExtraTerms((terms) => terms.filter((item) => item !== term))}><Close size={12} aria-hidden="true" /></button></span>)}</div>}
+                {extraTerms.length > 0 && <div className="term-tags">{extraTerms.map((term) => <Tag key={term} type="cool-gray" filter onClose={() => setExtraTerms((terms) => terms.filter((item) => item !== term))}>{term}</Tag>)}</div>}
               </div>
               <Button renderIcon={Search} onClick={() => setShowResults(true)}>Preview mock results</Button>
             </Stack>
