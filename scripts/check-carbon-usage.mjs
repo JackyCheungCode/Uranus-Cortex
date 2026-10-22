@@ -7,9 +7,6 @@ const checks = [
   { pattern: /#[0-9a-fA-F]{3,8}\b/g, label: 'hex color literal' },
   { pattern: /\b(?:rgb|rgba|hsl|hsla)\(/g, label: 'raw color function' },
 ];
-const temporaryExemptions = new Set([
-  'src/styles.css', // Temporary scaffold fallbacks; remove after token support is verified.
-]);
 
 function walk(path) {
   return readdirSync(path).flatMap((entry) => {
@@ -21,7 +18,7 @@ function walk(path) {
 const violations = [];
 for (const root of roots) {
   for (const file of walk(root)) {
-    if (!extensions.has(extname(file)) || temporaryExemptions.has(file)) continue;
+    if (!extensions.has(extname(file))) continue;
     const content = readFileSync(file, 'utf8');
     for (const { pattern, label } of checks) {
       for (const match of content.matchAll(pattern)) {
@@ -37,5 +34,5 @@ if (violations.length) {
   console.error(violations.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log('Carbon usage check passed (temporary scaffold fallback file is exempt).');
+  console.log('Carbon usage check passed.');
 }
