@@ -7,7 +7,7 @@ import {
   Settings,
   UserMultiple,
 } from '@carbon/icons-react';
-import { Button, Header, HeaderGlobalBar, HeaderMenuButton, HeaderName, SideNav, SideNavItems, SideNavLink, SkipToContent, Tag, Tile } from '@carbon/react';
+import { Header, HeaderGlobalBar, HeaderMenuButton, HeaderName, SideNav, SideNavItems, SideNavLink, SkipToContent, Tag, Tile } from '@carbon/react';
 import { useState } from 'react';
 import { DashboardPage } from './modules/dashboard';
 import { DiscoveryPage } from './modules/discovery';
