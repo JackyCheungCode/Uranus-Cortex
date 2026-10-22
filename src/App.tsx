@@ -1,66 +1,133 @@
-import { ArrowRight, CheckmarkFilled, Code } from '@carbon/icons-react';
-import { Button, Column, Grid, Stack, Tag, Tile } from '@carbon/react';
+import {
+  Activity,
+  Api,
+  ArrowRight,
+  CheckmarkFilled,
+  ChevronDown,
+  Dashboard,
+  Help,
+  Search,
+  Settings,
+  UserMultiple,
+} from '@carbon/icons-react';
+import { Button, Column, Grid, Tag, Tile } from '@carbon/react';
+import { useState } from 'react';
+import { DashboardPage } from './modules/dashboard/DashboardPage';
+import { DiscoveryPage } from './modules/discovery/DiscoveryPage';
+import './styles.css';
 
-const foundationChecks = [
-  'Carbon-first component policy documented',
-  'TypeScript and lint quality gates configured',
-  'Automated component test baseline added',
+type PageId = 'dashboard' | 'discovery' | 'buyers' | 'crm' | 'integrations' | 'settings';
+
+const navigation: Array<{ id: PageId; label: string; icon: typeof Dashboard }> = [
+  { id: 'dashboard', label: 'Overview', icon: Dashboard },
+  { id: 'discovery', label: 'Buyer discovery', icon: Search },
+  { id: 'buyers', label: 'Buyer profiles', icon: UserMultiple },
+  { id: 'crm', label: 'CRM pipeline', icon: Activity },
+  { id: 'integrations', label: 'API providers', icon: Api },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
-export default function App() {
+const pageTitles: Record<PageId, string> = {
+  dashboard: 'Overview',
+  discovery: 'Buyer discovery',
+  buyers: 'Buyer profiles',
+  crm: 'CRM pipeline',
+  integrations: 'API providers',
+  settings: 'Settings',
+};
+
+function ComingSoonPage({ page }: { page: Exclude<PageId, 'dashboard' | 'discovery'> }) {
+  const descriptions: Record<typeof page, string> = {
+    buyers: 'Review qualified companies, evidence, public contact details, and buyer-fit signals.',
+    crm: 'Organize reviewed prospects into a clear follow-up workflow.',
+    integrations: 'Configure search providers and manage connection status in a future secure backend.',
+    settings: 'Manage workspace preferences and application behavior.',
+  };
+
   return (
-    <main className="app-shell" aria-label="Uranus Cortex application">
+    <section className="placeholder-page" aria-labelledby="placeholder-title">
+      <div className="page-heading">
+        <div>
+          <p className="eyebrow">WORKSPACE</p>
+          <h1 id="placeholder-title">{pageTitles[page]}</h1>
+          <p className="page-description">{descriptions[page]}</p>
+        </div>
+        <Tag type="cool-gray">Frontend prototype</Tag>
+      </div>
+      <Tile className="placeholder-tile">
+        <div className="placeholder-tile__icon"><CheckmarkFilled size={20} aria-hidden="true" /></div>
+        <h2>Designed for the next implementation phase</h2>
+        <p>This area is a documented placeholder. No real services, credentials, or production data are connected.</p>
+      </Tile>
+    </section>
+  );
+}
+
+export default function App() {
+  const [activePage, setActivePage] = useState<PageId>('dashboard');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const activeLabel = pageTitles[activePage];
+
+  return (
+    <div className="app-shell">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <header className="app-header">
         <div className="app-header__brand">
-          <Code size={24} aria-hidden="true" />
-          <span>URANUS CORTEX</span>
+          <span className="brand-mark" aria-hidden="true">U</span>
+          <span className="brand-name">URANUS <strong>CORTEX</strong></span>
+          <span className="brand-divider" aria-hidden="true" />
+          <span className="brand-workspace">Buyer intelligence</span>
         </div>
-        <Tag type="blue">Foundation preview</Tag>
+        <div className="app-header__actions">
+          <Tag type="blue">Prototype</Tag>
+          <Button kind="ghost" size="md" renderIcon={Help} iconDescription="Help" hasIconOnly aria-label="Help" />
+          <Button kind="ghost" size="md" renderIcon={ChevronDown} onClick={() => setMobileNavOpen((open) => !open)} className="mobile-menu-trigger">
+            Menu
+          </Button>
+        </div>
       </header>
-      <Grid className="app-content">
-        <Column sm={4} md={8} lg={12} xlg={12}>
-          <Stack gap={7}>
-            <section className="hero" aria-labelledby="page-title">
-              <p className="eyebrow">PROJECT FOUNDATION</p>
-              <h1 id="page-title">Uranus Cortex</h1>
-              <p className="hero__summary">
-                A Carbon-first application foundation, with accessibility and engineering quality built into the workflow.
-              </p>
-              <div className="hero__actions">
-                <Button renderIcon={ArrowRight} onClick={() => document.getElementById('foundation')?.scrollIntoView({ behavior: 'smooth' })}>
-                  Explore foundation
-                </Button>
-              </div>
-            </section>
-            <section id="foundation" aria-labelledby="foundation-title">
-              <div className="section-heading">
-                <div>
-                  <p className="eyebrow">GOVERNANCE</p>
-                  <h2 id="foundation-title">Foundation status</h2>
-                </div>
-                <Tag type="green">In progress</Tag>
-              </div>
-              <Grid>
-                {foundationChecks.map((check) => (
-                  <Column key={check} sm={4} md={4} lg={4}>
-                    <Tile className="status-tile">
-                      <CheckmarkFilled size={20} className="status-tile__icon" aria-hidden="true" />
-                      <p>{check}</p>
-                    </Tile>
-                  </Column>
-                ))}
-              </Grid>
-            </section>
-            <section className="next-steps" aria-labelledby="next-steps-title">
-              <h2 id="next-steps-title">Built to be reviewed</h2>
-              <p>
-                This preview is a technical foundation, not a completed product.
-                Product workflows, data persistence, and deployment will be defined from agreed requirements.
-              </p>
-            </section>
-          </Stack>
-        </Column>
-      </Grid>
-    </main>
+
+      <div className="app-frame">
+        <aside className={`app-sidebar ${mobileNavOpen ? 'app-sidebar--open' : ''}`} aria-label="Main navigation">
+          <p className="sidebar-label">WORKSPACE</p>
+          <nav>
+            {navigation.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                className={`nav-item ${activePage === id ? 'nav-item--active' : ''}`}
+                aria-current={activePage === id ? 'page' : undefined}
+                onClick={() => {
+                  setActivePage(id);
+                  setMobileNavOpen(false);
+                }}
+              >
+                <Icon size={20} aria-hidden="true" />
+                <span>{label}</span>
+                {id === 'discovery' && <span className="nav-item__dot" aria-label="Primary workflow" />}
+              </button>
+            ))}
+          </nav>
+          <div className="sidebar-footer">
+            <div className="environment-indicator"><span aria-hidden="true" /> Mock environment</div>
+            <p>Frontend phase · No live services</p>
+          </div>
+        </aside>
+
+        <main id="main-content" className="main-content" aria-label={`Uranus Cortex application`}>
+          <div className="content-topline">
+            <span>Workspace</span><span aria-hidden="true">/</span><strong>{activeLabel}</strong>
+          </div>
+          {activePage === 'dashboard' && <DashboardPage onOpenDiscovery={() => setActivePage('discovery')} />}
+          {activePage === 'discovery' && <DiscoveryPage />}
+          {(['buyers', 'crm', 'integrations', 'settings'] as const).includes(activePage as 'buyers' | 'crm' | 'integrations' | 'settings') && (
+            <ComingSoonPage page={activePage as 'buyers' | 'crm' | 'integrations' | 'settings'} />
+          )}
+          <footer className="app-footer">
+            <span>Uranus Cortex</span><span>Carbon-first frontend prototype</span>
+          </footer>
+        </main>
+      </div>
+    </div>
   );
 }
