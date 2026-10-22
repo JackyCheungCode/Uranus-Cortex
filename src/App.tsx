@@ -87,33 +87,38 @@ export default function App() {
       </header>
 
       <div className="app-frame">
-        <aside className={`app-sidebar ${mobileNavOpen ? 'app-sidebar--open' : ''}`} aria-label="Main navigation">
-          <p className="sidebar-label">WORKSPACE</p>
-          <nav>
+        <SideNav
+          aria-label="Main navigation"
+          expanded={mobileNavOpen}
+          isPersistent={false}
+          className="app-sidebar"
+          onOverlayClick={() => setMobileNavOpen(false)}
+        >
+          <SideNavItems>
             {navigation.map(({ id, label, icon: Icon }) => (
-              <button
+              <SideNavLink
                 key={id}
-                type="button"
-                className={`nav-item ${activePage === id ? 'nav-item--active' : ''}`}
+                href={`#${id}`}
+                renderIcon={Icon}
+                isActive={activePage === id}
                 aria-current={activePage === id ? 'page' : undefined}
-                onClick={() => {
+                onClick={(event) => {
+                  event.preventDefault();
                   setActivePage(id);
                   setMobileNavOpen(false);
                 }}
               >
-                <Icon size={20} aria-hidden="true" />
-                <span>{label}</span>
-                {id === 'discovery' && <span className="nav-item__dot" aria-label="Primary workflow" />}
-              </button>
+                {label}
+              </SideNavLink>
             ))}
-          </nav>
+          </SideNavItems>
           <div className="sidebar-footer">
             <div className="environment-indicator"><span aria-hidden="true" /> Mock environment</div>
             <p>Frontend phase · No live services</p>
           </div>
-        </aside>
+        </SideNav>
 
-        <main id="main-content" className="main-content" aria-label={`Uranus Cortex application`}>
+        <main id="main-content" className="main-content" aria-label="Uranus Cortex application">
           <div className="content-topline">
             <span>Workspace</span><span aria-hidden="true">/</span><strong>{activeLabel}</strong>
           </div>
