@@ -64,7 +64,7 @@ function ComingSoonPage({ page }: { page: Exclude<PageId, 'dashboard' | 'discove
 
 export default function App() {
   const [activePage, setActivePage] = useState<PageId>('dashboard');
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(true);
   const activeLabel = pageTitles[activePage];
 
   return (
@@ -90,9 +90,8 @@ export default function App() {
         <SideNav
           aria-label="Main navigation"
           expanded={mobileNavOpen}
-          isPersistent={false}
+          isFixedNav
           className="app-sidebar"
-          onOverlayClick={() => setMobileNavOpen(false)}
         >
           <SideNavItems>
             {navigation.map(({ id, label, icon: Icon }) => (
