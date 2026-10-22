@@ -2,13 +2,12 @@ import {
   Activity,
   Api,
   CheckmarkFilled,
-  ChevronDown,
   Dashboard,
   Search,
   Settings,
   UserMultiple,
 } from '@carbon/icons-react';
-import { Button, Tag, Tile } from '@carbon/react';
+import { Button, Header, HeaderGlobalBar, HeaderMenuButton, HeaderName, SideNav, SideNavItems, SideNavLink, SkipToContent, Tag, Tile } from '@carbon/react';
 import { useState } from 'react';
 import { DashboardPage } from './modules/dashboard';
 import { DiscoveryPage } from './modules/discovery';
