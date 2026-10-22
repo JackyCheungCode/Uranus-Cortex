@@ -17,6 +17,21 @@ npm run dev
 
 Run `npm run typecheck`, `npm run lint`, `npm run carbon:check`, `npm run test`, `npm run build`, and `npm audit`.
 
+## Engineering standards
+
+These documents are required reading before frontend implementation:
+
+- [Repository-wide AI and contribution rules](./AGENTS.md)
+- [Frontend engineering and modularity standards](./docs/engineering/frontend-standards.md)
+- [UI acceptance checklist](./docs/engineering/ui-acceptance-checklist.md)
+- [Frontend architecture and module boundaries](./docs/architecture/frontend-architecture.md)
+- [IBM Carbon standards](./docs/design/carbon-standards.md)
+- [Architecture overview](./docs/architecture.md)
+
+## Product planning
+
+- [Search and buyer discovery: development requirements and implementation plan](./docs/product/search-and-buyer-discovery.md)
+
 ## Cloudflare Workers
 
 The `wrangler.jsonc` configuration targets the Worker named `cortex` and serves the Vite `dist/` output as a single-page application.
@@ -29,10 +44,8 @@ npm run deploy
 
 The deploy command builds before deploying. Do not deploy until CI is green and the target Worker configuration has been reviewed. The current Worker has no configured resource bindings or secrets; backend services and production environment variables have not been selected.
 
-## Product planning
+## Project stage
 
-- [Search and buyer discovery: development requirements and implementation plan](./docs/product/search-and-buyer-discovery.md)
+The current stage is **frontend-first**: build the modular UI with IBM Carbon, typed interfaces, and Mock services before connecting real APIs, authentication, databases, or production resources. Mock behavior must never be presented as a real service result.
 
-Read [AGENTS.md](./AGENTS.md), [Carbon standards](./docs/design/carbon-standards.md), and [architecture](./docs/architecture.md) before changing UI or architecture.
-
-This is a technical foundation, not a completed product. Product workflows, persistence, and authentication remain unspecified.
+This is a technical foundation, not a completed product. Product workflows, persistence, and authentication remain subject to the approved requirements.
