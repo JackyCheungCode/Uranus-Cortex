@@ -98,7 +98,6 @@ export default function App() {
                 onClick={(event) => {
                   event.preventDefault();
                   setActivePage(id);
-                  setMobileNavOpen(false);
                 }}
               >
                 {label}
