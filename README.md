@@ -29,6 +29,10 @@ npm run deploy
 
 The deploy command builds before deploying. Do not deploy until CI is green and the target Worker configuration has been reviewed. The current Worker has no configured resource bindings or secrets; backend services and production environment variables have not been selected.
 
+## Product planning
+
+- [Search and buyer discovery: development requirements and implementation plan](./docs/product/search-and-buyer-discovery.md)
+
 Read [AGENTS.md](./AGENTS.md), [Carbon standards](./docs/design/carbon-standards.md), and [architecture](./docs/architecture.md) before changing UI or architecture.
 
 This is a technical foundation, not a completed product. Product workflows, persistence, and authentication remain unspecified.
