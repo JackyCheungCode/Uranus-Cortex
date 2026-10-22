@@ -10,7 +10,7 @@ import {
   Settings,
   UserMultiple,
 } from '@carbon/icons-react';
-import { Button, Tag } from '@carbon/react';
+import { Button, Tag, Tile } from '@carbon/react';
 import { useState } from 'react';
 import { DashboardPage } from './modules/dashboard';
 import { DiscoveryPage } from './modules/discovery';
