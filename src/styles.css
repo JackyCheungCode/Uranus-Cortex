@@ -1,0 +1,39 @@
+:root {
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--cds-text-primary, #161616);
+  background: var(--cds-background, #f4f4f4);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; }
+.app-shell { min-height: 100vh; background: var(--cds-background, #f4f4f4); }
+.app-header {
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 3.5rem; padding: 0 1.5rem;
+  color: var(--cds-text-on-color, #fff); background: var(--cds-background-inverse, #161616);
+}
+.app-header__brand { display: flex; align-items: center; gap: 0.75rem; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.04em; }
+.app-content { padding-block: 3rem 5rem; }
+.hero { padding: clamp(1.5rem, 5vw, 4rem); color: var(--cds-text-on-color, #fff); background: var(--cds-background-inverse, #161616); }
+.eyebrow { margin: 0 0 1rem; color: var(--cds-text-secondary, #525252); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; }
+.hero .eyebrow { color: var(--cds-text-on-color, #fff); }
+.hero h1 { max-width: 14ch; margin: 0; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 400; letter-spacing: -0.035em; line-height: 1.05; }
+.hero__summary { max-width: 42rem; margin: 1.5rem 0 2rem; color: var(--cds-text-on-color, #fff); font-size: 1.125rem; line-height: 1.5; }
+.hero__actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+.section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+.section-heading .eyebrow { margin-bottom: 0.5rem; }
+.section-heading h2, .next-steps h2 { margin: 0; font-size: 1.75rem; font-weight: 400; }
+.status-tile { display: flex; min-height: 9rem; flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+.status-tile p { margin: 0; max-width: 22ch; line-height: 1.4; }
+.status-tile__icon { color: var(--cds-support-success, #24a148); }
+.next-steps { max-width: 52rem; padding-top: 1rem; }
+.next-steps p { max-width: 48rem; color: var(--cds-text-secondary, #525252); line-height: 1.6; }
+@media (max-width: 42rem) {
+  .app-header { padding-inline: 1rem; }
+  .app-content { padding-block: 1.5rem 3rem; }
+  .section-heading { align-items: flex-start; flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
