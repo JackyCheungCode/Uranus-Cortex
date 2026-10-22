@@ -4,7 +4,6 @@ import {
   CheckmarkFilled,
   ChevronDown,
   Dashboard,
-  Help,
   Search,
   Settings,
   UserMultiple,
@@ -74,9 +73,6 @@ export default function App() {
         <HeaderName href="#main-content" prefix="URANUS">Cortex</HeaderName>
         <HeaderGlobalBar>
           <Tag type="blue">Prototype</Tag>
-          <HeaderGlobalAction aria-label="Help" tooltipAlignment="end" onClick={() => {}}>
-            <Help size={20} />
-          </HeaderGlobalAction>
           <HeaderMenuButton
             aria-label="Toggle navigation"
             isActive={mobileNavOpen}
