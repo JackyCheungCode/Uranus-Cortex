@@ -1,4 +1,4 @@
-import { Add, Play, Reset, Search, SettingsAdjust, Stop, TrashCan } from '@carbon/icons-react';
+import { Add, Play, Reset, Search, SettingsAdjust, TrashCan } from '@carbon/icons-react';
 import {
   Button, Checkbox, Column, Grid, InlineNotification, NumberInput, Select, SelectItem,
   Stack, Tag, TextArea, TextInput, Tile
@@ -33,7 +33,6 @@ export function DiscoveryPage() {
   const [budget, setBudget] = useState(5);
   const [timeRange, setTimeRange] = useState('Any time');
   const [previewReady, setPreviewReady] = useState(false);
-  const [taskStarted, setTaskStarted] = useState(false);
 
   const query = useMemo(() => {
     const parts = [keywords.trim() ? `"${keywords.trim()}"` : ''];
@@ -115,7 +114,7 @@ export function DiscoveryPage() {
                 {['Any time', 'Past week', 'Past month', 'Past 3 months', 'Past year'].map((value) => <SelectItem key={value} value={value} text={value} />)}
               </Select>
               <div className="builder-actions">
-                <Button renderIcon={Search} onClick={() => { setPreviewReady(true); setTaskStarted(false); }}>Preview search plan</Button>
+                <Button renderIcon={Search} onClick={() => { setPreviewReady(true); }}>Preview search plan</Button>
                 <Button kind="ghost" renderIcon={Reset} onClick={reset}>Reset</Button>
               </div>
             </Stack>
@@ -165,7 +164,7 @@ export function DiscoveryPage() {
                 <div><dt>Budget guardrail</dt><dd>${budget.toFixed(2)} USD</dd></div>
                 <div><dt>Freshness filter</dt><dd>{timeRange}</dd></div>
               </div>
-              <Button renderIcon={Play} disabled onClick={() => setTaskStarted(true)}>Start search (provider required)</Button>
+              <Button renderIcon={Play} disabled onClick={() => undefined}>Start search (provider required)</Button>
               <p className="section-caption">Execution remains disabled until a secure server-side provider adapter and credentials are implemented.</p>
             </Stack>
           </Tile>
