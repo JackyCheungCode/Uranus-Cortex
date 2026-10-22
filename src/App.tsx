@@ -1,7 +1,6 @@
 import {
   Activity,
   Api,
-  ArrowRight,
   CheckmarkFilled,
   ChevronDown,
   Dashboard,
