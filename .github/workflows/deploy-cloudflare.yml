@@ -1,0 +1,43 @@
+name: Deploy Cloudflare Worker
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_target:
+        description: 'Type uranus-cortex to confirm the deployment target'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: ${{ inputs.confirm_target == 'uranus-cortex' }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Run quality gates
+        run: |
+          npm run typecheck
+          npm run lint
+          npm run carbon:check
+          npm run test
+          npm run build
+          npm audit --audit-level=high
+      - name: Validate deployment configuration
+        run: npx wrangler deploy --dry-run
+      - name: Deploy to the explicitly configured Worker
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
