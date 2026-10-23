@@ -1,0 +1,31 @@
+/* Uranus Design System — dark theme semantic overrides.
+ * Activate on a root element with data-theme="dark"; no theme toggle is wired yet.
+ */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --uranus-color-surface-canvas: #161616;
+  --uranus-color-surface-primary: #262626;
+  --uranus-color-surface-secondary: #202020;
+  --uranus-color-surface-raised: #393939;
+  --uranus-color-surface-hover: #353535;
+  --uranus-color-surface-selected: #002d9c;
+  --uranus-color-text-primary: #f4f4f4;
+  --uranus-color-text-secondary: #c6c6c6;
+  --uranus-color-text-tertiary: #a8a8a8;
+  --uranus-color-text-inverse: #161616;
+  --uranus-color-text-link: #a6c8ff;
+  --uranus-color-action-primary: #4589ff;
+  --uranus-color-action-primary-hover: #78a9ff;
+  --uranus-color-action-primary-active: #a6c8ff;
+  --uranus-color-action-secondary: #c6c6c6;
+  --uranus-color-focus: #78a9ff;
+  --uranus-color-status-success: #42be65;
+  --uranus-color-status-warning: #f1c21b;
+  --uranus-color-status-danger: #ff8389;
+  --uranus-color-status-info: #a6c8ff;
+  --uranus-color-border-default: #6f6f6f;
+  --uranus-color-border-subtle: #393939;
+  --uranus-color-border-strong: #a8a8a8;
+  --uranus-shadow-card: 0 1px 2px rgb(0 0 0 / 28%);
+  --uranus-shadow-overlay: 0 8px 24px rgb(0 0 0 / 48%);
+}
