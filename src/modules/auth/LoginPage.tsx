@@ -8,8 +8,6 @@ import {
 import {
   Button,
   Checkbox,
-  Column,
-  Grid,
   InlineNotification,
   Link,
   PasswordInput,
@@ -18,7 +16,7 @@ import {
   TextInput,
   Theme,
 } from '@carbon/react';
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type MouseEvent } from 'react';
 
 type LoginPageProps = {
   onLogin: () => void;
@@ -36,7 +34,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     onLogin();
   };
 
-  const showPrototypeNotice = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const showPrototypeNotice = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     setNotice('此功能尚未接入。当前版本仅演示登录界面，不会验证或保存账户信息。');
   };
