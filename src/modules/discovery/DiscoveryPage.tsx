@@ -47,12 +47,14 @@ export function DiscoveryPage({ channel, description }: Props) {
     if (productType === 'mixed' || productType === 'both') parts.push('("混装旧衣" OR "未分拣旧衣")');
     if (productType === 'sorted' || productType === 'both') parts.push('("分拣旧衣" OR "分级二手服装")');
     if (country) parts.push(`"${country}"`);
+    if (language !== '不限') parts.push(`language:${({ 英语: 'en', 阿拉伯语: 'ar', 法语: 'fr', 德语: 'de', 波兰语: 'pl', 西班牙语: 'es', 中文: 'zh' } as Record<string, string>)[language] ?? language}`);
+    if (timeRange !== '不限时间') parts.push(`时间范围：${timeRange}`);
     if (purchaseSignals) parts.push('("采购" OR "进口" OR "批发" OR "采购需求")');
     if (excludeRetailers) parts.push('-零售 -时尚品牌');
     requiredTerms.forEach((term) => parts.push(`"${term}"`));
     if (excludedDomains.trim()) parts.push(`-site:${excludedDomains.trim().split(/[ ,\\n]+/).filter(Boolean).join(' -site:')}`);
     return parts.filter(Boolean).join(' AND ');
-  }, [keywords, productType, country, purchaseSignals, excludeRetailers, requiredTerms, excludedDomains]);
+  }, [keywords, productType, country, language, timeRange, purchaseSignals, excludeRetailers, requiredTerms, excludedDomains]);
 
   const reset = () => {
     setKeywords('二手服装 进口商'); setProductType('mixed'); setCountry('英国');
@@ -72,7 +74,7 @@ export function DiscoveryPage({ channel, description }: Props) {
         <div>
           <p className="eyebrow">URANUS CORTEX / 潜客发现</p>
           <h1 id="discovery-title">{channelTitles[channel]}</h1>
-          <p className="page-description">{description} 以可核查证据为依据；搜索线索不等于已验证的采购事实。</p>
+          <p className="page-description">{description} 从可解释的条件开始，先检查查询和预算，再决定是否执行。搜索线索不等于已验证的采购事实。</p>
         </div>
         <Tag type="cool-gray">前端原型</Tag>
       </div>
@@ -88,8 +90,8 @@ export function DiscoveryPage({ channel, description }: Props) {
           <Tile className="builder-tile">
             <Stack gap={5}>
               <div className="section-heading section-heading--compact">
-                <div><p className="eyebrow">01 / 搜索条件</p><h2>构建发现条件</h2></div>
-                <Tag type="blue">结构化查询</Tag>
+                <div><p className="eyebrow">步骤 1</p><h2>定义目标买家</h2><p className="section-caption">先描述产品、市场和可能的采购行为。</p></div>
+                <Tag type="blue">条件构建器</Tag>
               </div>
               <TextInput id="search-keywords" labelText="核心关键词" value={keywords} onChange={(event) => setKeywords(event.currentTarget.value)} helperText="输入企业类型、产品或采购意向关键词。" placeholder="例如：二手服装进口商" />
               <Select id="product-type" labelText="产品类别" value={productType} onChange={(event) => setProductType(event.currentTarget.value as ProductType)}>
@@ -135,8 +137,8 @@ export function DiscoveryPage({ channel, description }: Props) {
         <Column sm={4} md={8} lg={5}>
           <Stack gap={4}>
             <Tile className="query-preview">
-              <p className="eyebrow">02 / 查询转换</p>
-              <h2>生成的查询表达式</h2>
+              <p className="eyebrow">步骤 2</p>
+              <h2>检查查询表达式</h2>
               <pre>{query || '添加关键词或条件后，将在此生成查询表达式。'}</pre>
               <div className="term-tags">
                 <Tag type="blue">市场：{country || '未设置'}</Tag>
@@ -146,8 +148,8 @@ export function DiscoveryPage({ channel, description }: Props) {
               <p className="section-caption">这是统一查询预览，不代表每个服务商都支持所有语法或过滤条件。</p>
             </Tile>
             <Tile className="search-hint">
-              <p className="eyebrow">03 / 成本与质量控制</p>
-              <h2>执行前检查</h2>
+              <p className="eyebrow">步骤 3</p>
+              <h2>预算与执行边界</h2>
               <dl className="plan-summary">
                 <div><dt>结果数量上限</dt><dd>{resultLimit}</dd></div>
                 <div><dt>预算上限</dt><dd>${budget.toFixed(2)} 美元</dd></div>
@@ -164,7 +166,7 @@ export function DiscoveryPage({ channel, description }: Props) {
       {previewReady && (
         <section className="mock-results" aria-labelledby="search-plan-title">
           <div className="section-heading">
-            <div><p className="eyebrow">04 / 执行审核</p><h2 id="search-plan-title">搜索执行计划</h2></div>
+            <div><p className="eyebrow">执行前审核</p><h2 id="search-plan-title">本次任务摘要</h2></div>
             <Tag type="cool-gray">尚未执行</Tag>
           </div>
           <InlineNotification kind="warning" lowContrast title="尚未连接服务商" subtitle="当前没有已配置并通过连接测试的服务商。以下计划仅供预览，不会发出 API 请求或产生费用。" hideCloseButton />
