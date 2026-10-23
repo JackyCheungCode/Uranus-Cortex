@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowUpRight, Checkmark, Close, Cloud, Document, Globe, Launch, Renew, Search, WarningAlt, WatsonHealthAiResults,
 } from '@carbon/icons-react';
@@ -15,14 +15,13 @@ const initialProviders: Provider[] = [
   { id: 'brave', name: 'Brave Search API', kind: 'Web / SERP', description: '独立网页索引与搜索结果', env: 'BRAVE_SEARCH_API_KEY', configured: false, enabled: true, status: '待配置' },
   { id: 'serper', name: 'Serper.dev', kind: 'SERP API', description: 'Google 搜索结果 API 适配器', env: 'SERPER_API_KEY', configured: false, enabled: false, status: '待配置' },
   { id: 'exa', name: 'Exa', kind: 'Semantic search', description: '语义检索与网页发现', env: 'EXA_API_KEY', configured: false, enabled: false, status: '待配置' },
-  { id: 'dataforseo', name: 'DataForSEO', kind: 'SERP / Data', description: 'SERP、关键词与批量数据接口', env: 'DATAFORSEO_LOGIN / PASSWORD', configured: false, enabled: false, status: '待配置' },
 ];
 const countries = [
   ['US','美国','🇺🇸'],['GB','英国','🇬🇧'],['DE','德国','🇩🇪'],['FR','法国','🇫🇷'],['NL','荷兰','🇳🇱'],
   ['IT','意大利','🇮🇹'],['ES','西班牙','🇪🇸'],['PL','波兰','🇵🇱'],['JP','日本','🇯🇵'],['KR','韩国','🇰🇷'],
   ['AU','澳大利亚','🇦🇺'],['CA','加拿大','🇨🇦'],['HK','中国香港','🇭🇰'],['TW','中国台湾','🇹🇼'],['MO','中国澳门','🇲🇴'],['CN-MAINLAND','中国大陆','🇨🇳'],
 ];
-const providersToRun = (providers: Provider[]) => providers.filter(p => p.enabled && p.configured);
+const providersToRun = (providers: Provider[]) => providers.filter(p => p.enabled && p.status === '连接成功');
 
 export default function SearchDiscoveryPage() {
   const [tab, setTab] = useState(0);
@@ -51,6 +50,18 @@ export default function SearchDiscoveryPage() {
   const [filterStatus, setFilterStatus] = useState('全部状态');
   const [settingsStatus, setSettingsStatus] = useState('');
   const readyProviders = useMemo(() => providersToRun(providers), [providers]);
+  useEffect(() => {
+    let active = true;
+    void fetch('/api/discovery/providers').then(response => response.ok ? response.json() as Promise<{ providers?: Array<{ id: string; configured: boolean }> }> : Promise.reject(new Error('provider status unavailable'))).then(data => {
+      if (!active) return;
+      setProviders(prev => prev.map(provider => {
+        const server = data.providers?.find(item => item.id === provider.id);
+        return server ? { ...provider, configured: server.configured, status: server.configured ? '已配置，待测试' : '待配置' } : provider;
+      }));
+    }).catch(() => { /* Keep an unverified state if the API is unavailable. */ });
+    return () => { active = false; };
+  }, []);
+
   const selectedCountryNames = countries.filter(c => selectedCountries.includes(c[0])).map(c => c[1]);
   const normalizedQuery = queryMode ? rawQuery : [keywords, product, buyerType, selectedCountryNames.join(' '), language !== 'any' ? 'lang:' + language : '', exclude ? '-(' + exclude + ')' : '', includeDomains ? 'site:' + includeDomains : ''].filter(Boolean).join(' ');
   const eligibleResults = results.filter(r => filterStatus === '全部状态' || r.state === filterStatus);
@@ -130,7 +141,7 @@ export default function SearchDiscoveryPage() {
               </>}
               <div className="sd-section-subhead"><h3>目标国家 / 地区</h3><span>{selectedCountries.length} 个已选</span></div>
               <div className="sd-country-grid">{countries.map(([id,name,flag]) => <label key={id} className={`sd-country ${selectedCountries.includes(id) ? 'is-selected' : ''}`}><Checkbox id={'country-' + id} labelText="" checked={selectedCountries.includes(id)} onChange={() => toggleCountry(id)} /><span className="sd-flag" aria-hidden="true">{flag}</span><span>{name}</span></label>)}</div>
-              <div className="sd-section-subhead"><h3>结果限制与预算</h3><span>达到任一上限停止付费调用</span></div>
+              <div className="sd-section-subhead"><h3>结果限制与预算</h3><span>预算显示为用户设定值；实际强制停止需完成成本计量后启用</span></div>
               <div className="sd-form-row sd-limit-row"><NumberInput id="sd-limit" label="最多结果数" min={1} max={500} value={limit} onChange={(_, state) => setLimit(Number(state.value))} /><NumberInput id="sd-budget" label="任务预算上限（美元）" min={0} max={1000} step={1} value={budget} onChange={(_, state) => setBudget(Number(state.value))} /><NumberInput id="sd-pages" label="最大抓取页数" min={1} max={5000} value={maxPages} onChange={(_, state) => setMaxPages(Number(state.value))} /></div>
               <Checkbox id="sd-evidence" labelText="为关键字段保存来源 URL、引用片段、抓取时间与可信状态" checked={showEvidence} onChange={setShowEvidence} />
               <div className="sd-query-preview"><div><span>统一查询预览</span><Tooltip label="执行时将根据供应商能力转换表达式。"><WarningAlt size={16} /></Tooltip></div><code>{normalizedQuery}</code><Button kind="ghost" size="sm" renderIcon={ArrowUpRight} onClick={() => { setRawQuery(normalizedQuery); setQueryMode(true); }}>转为原始表达式</Button></div>
@@ -157,7 +168,7 @@ export default function SearchDiscoveryPage() {
           </div>
         </TabPanel>
         <TabPanel>
-          <div className="sd-workspace-grid"><section className="sd-panel"><div className="sd-panel-heading"><div><h2>预算与停止规则</h2><p>停止条件应在任务执行端强制实施，而不是只由前端显示。</p></div></div><div className="sd-rule-row"><div><strong>单任务预算上限</strong><p>触达上限后停止新的付费调用。</p></div><strong>${budget}</strong></div><div className="sd-rule-row"><div><strong>搜索结果数量</strong><p>限制单个任务保留的候选网页数。</p></div><strong>{limit}</strong></div><div className="sd-rule-row"><div><strong>最大抓取页数</strong><p>防止网页提取阶段无限扩张。</p></div><strong>{maxPages}</strong></div><div className="sd-rule-row"><div><strong>连续无新增时停止</strong><p>建议默认三批无新增合格企业后停止，可按任务调整。</p></div><Tag type="blue">建议值</Tag></div><div className="sd-rule-row"><div><strong>重试与错误率阈值</strong><p>需要在 Worker 队列 / 任务执行层实现。</p></div><Tag type="cool-gray">待接入后端</Tag></div></section><aside className="sd-side-stack"><Tile><h3>成本计量</h3><p className="sd-muted">供应商实际账单需以官方账单为准。当前界面不会虚构调用量、免费额度或费用。</p><div className="sd-rule-row"><span>搜索调用</span><strong>—</strong></div><div className="sd-rule-row"><span>网页抓取</span><strong>—</strong></div><div className="sd-rule-row"><span>AI 分析</span><strong>—</strong></div><div className="sd-rule-row"><span>缓存命中率</span><strong>—</strong></div></Tile><Tile><h3>保留与审计</h3><p className="sd-muted">正式实现需要记录任务、供应商、输入条件版本、成本快照、证据版本、审核操作和禁止联系记录。</p></Tile></aside></div>
+          <div className="sd-workspace-grid"><section className="sd-panel"><div className="sd-panel-heading"><div><h2>预算与停止规则</h2><p>未接入官方计价和用量账单前，不会虚报实际成本；生产付费任务需要服务端成本闸门。</p></div></div><div className="sd-rule-row"><div><strong>单任务预算上限</strong><p>触达上限后停止新的付费调用。</p></div><strong>${budget}</strong></div><div className="sd-rule-row"><div><strong>搜索结果数量</strong><p>限制单个任务保留的候选网页数。</p></div><strong>{limit}</strong></div><div className="sd-rule-row"><div><strong>最大抓取页数</strong><p>防止网页提取阶段无限扩张。</p></div><strong>{maxPages}</strong></div><div className="sd-rule-row"><div><strong>连续无新增时停止</strong><p>建议默认三批无新增合格企业后停止，可按任务调整。</p></div><Tag type="blue">建议值</Tag></div><div className="sd-rule-row"><div><strong>重试与错误率阈值</strong><p>需要在 Worker 队列 / 任务执行层实现。</p></div><Tag type="cool-gray">待接入后端</Tag></div></section><aside className="sd-side-stack"><Tile><h3>成本计量</h3><p className="sd-muted">供应商实际账单需以官方账单为准。当前界面不会虚构调用量、免费额度或费用。</p><div className="sd-rule-row"><span>搜索调用</span><strong>—</strong></div><div className="sd-rule-row"><span>网页抓取</span><strong>—</strong></div><div className="sd-rule-row"><span>AI 分析</span><strong>—</strong></div><div className="sd-rule-row"><span>缓存命中率</span><strong>—</strong></div></Tile><Tile><h3>保留与审计</h3><p className="sd-muted">正式实现需要记录任务、供应商、输入条件版本、成本快照、证据版本、审核操作和禁止联系记录。</p></Tile></aside></div>
         </TabPanel>
       </TabPanels>
     </Tabs>
