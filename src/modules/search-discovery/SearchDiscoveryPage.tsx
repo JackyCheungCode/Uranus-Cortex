@@ -48,7 +48,8 @@ export default function SearchDiscoveryPage() {
   const [searchName, setSearchName] = useState('二手服装进口商 - 英语市场');
   const [showSave, setShowSave] = useState(false);
   const [filterStatus, setFilterStatus] = useState('全部状态');
-  const [settingsStatus, setSettingsStatus] = useState('');\n  const [accessToken, setAccessToken] = useState('');
+  const [settingsStatus, setSettingsStatus] = useState('');
+  const [accessToken, setAccessToken] = useState('');
   const readyProviders = useMemo(() => providersToRun(providers), [providers]);
 
 
