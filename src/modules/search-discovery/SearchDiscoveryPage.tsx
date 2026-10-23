@@ -48,11 +48,11 @@ export default function SearchDiscoveryPage() {
   const [searchName, setSearchName] = useState('二手服装进口商 - 英语市场');
   const [showSave, setShowSave] = useState(false);
   const [filterStatus, setFilterStatus] = useState('全部状态');
-  const [settingsStatus, setSettingsStatus] = useState('');
+  const [settingsStatus, setSettingsStatus] = useState('');\n  const [accessToken, setAccessToken] = useState('');
   const readyProviders = useMemo(() => providersToRun(providers), [providers]);
   useEffect(() => {
     let active = true;
-    void fetch('/api/discovery/providers').then(response => response.ok ? response.json() as Promise<{ providers?: Array<{ id: string; configured: boolean }> }> : Promise.reject(new Error('provider status unavailable'))).then(data => {
+    void fetch('/api/discovery/providers', { headers: { Authorization: 'Bearer ' + accessToken } }).then(response => response.ok ? response.json() as Promise<{ providers?: Array<{ id: string; configured: boolean }> }> : Promise.reject(new Error('provider status unavailable'))).then(data => {
       if (!active) return;
       setProviders(prev => prev.map(provider => {
         const server = data.providers?.find(item => item.id === provider.id);
@@ -60,7 +60,7 @@ export default function SearchDiscoveryPage() {
       }));
     }).catch(() => { /* Keep an unverified state if the API is unavailable. */ });
     return () => { active = false; };
-  }, []);
+  }, [accessToken]);
 
   const selectedCountryNames = countries.filter(c => selectedCountries.includes(c[0])).map(c => c[1]);
   const normalizedQuery = queryMode ? rawQuery : [keywords, product, buyerType, selectedCountryNames.join(' '), language !== 'any' ? 'lang:' + language : '', exclude ? '-(' + exclude + ')' : '', includeDomains ? 'site:' + includeDomains : ''].filter(Boolean).join(' ');
@@ -81,7 +81,7 @@ export default function SearchDiscoveryPage() {
     if (!readyProviders.length) { setTab(1); setMessage('当前没有已配置且启用的搜索服务。请先在“服务商设置”中配置后端密钥并完成连接测试。'); return; }
     setStatus('running'); setMessage('正在提交搜索任务…');
     try {
-      const response = await fetch('/api/discovery/search', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({
+      const response = await fetch('/api/discovery/search', { method: 'POST', headers: { 'content-type': 'application/json', Authorization: 'Bearer ' + accessToken }, body: JSON.stringify({
         query: normalizedQuery, keywords, product, buyerType, countries: selectedCountries, language, limit, budget,
         maxPages, exclude, includeDomains, timeRange, providers: readyProviders.map(p => p.id), captureEvidence: showEvidence,
       }) });
@@ -97,7 +97,7 @@ export default function SearchDiscoveryPage() {
   async function testProvider(provider: Provider) {
     setSettingsStatus(`正在检查 ${provider.name}…`);
     try {
-      const response = await fetch('/api/discovery/providers/' + provider.id + '/test', { method: 'POST' });
+      const response = await fetch('/api/discovery/providers/' + provider.id + '/test', { method: 'POST', headers: { Authorization: 'Bearer ' + accessToken } });
       const data = await response.json() as { configured?: boolean; ok?: boolean; message?: string };
       setProviders(prev => prev.map(p => p.id === provider.id ? { ...p, configured: Boolean(data.configured), status: data.ok ? '连接成功' : data.configured ? '连接失败' : '未配置' } : p));
       setSettingsStatus(data.message || (data.ok ? `${provider.name} 连接成功` : `${provider.name} 尚不可用`));
@@ -156,8 +156,9 @@ export default function SearchDiscoveryPage() {
         </TabPanel>
         <TabPanel>
           <div className="sd-panel sd-provider-panel"><div className="sd-panel-heading"><div><h2>搜索服务商</h2><p>密钥必须存储在 Worker Secret 或服务端密钥库中，不会在浏览器中录入或保存。</p></div><Tag type="cool-gray">适配器架构</Tag></div>
+            <div className="sd-access-token"><TextInput id="sd-access-token" type="password" labelText="潜客发现 API 访问令牌" helperText="输入 Cloudflare Worker Secret DISCOVERY_API_TOKEN 的值。令牌只保存在当前页面内存，不写入 localStorage。" value={accessToken} onChange={e => setAccessToken(e.target.value)} /><Button kind="secondary" size="sm" onClick={() => { setProviders(prev => prev.map(p => ({ ...p, status: '待配置', configured: false }))); setSettingsStatus('已清除本页面服务商状态；令牌仅保留在当前页面内存。'); }}>重置连接状态</Button></div>
             <InlineNotification kind="warning" lowContrast title="需要部署端配置密钥" subtitle="在 Cloudflare Worker 中设置相应环境变量后，使用连接测试验证。前端不会显示或保存完整密钥。" />
-            <div className="sd-provider-list">{providers.map(provider => <article className="sd-provider-row" key={provider.id}><div className="sd-provider-icon"><Globe size={21}/></div><div className="sd-provider-main"><div className="sd-provider-title"><strong>{provider.name}</strong><Tag type={provider.configured ? 'green' : 'cool-gray'}>{provider.status}</Tag><Tag type="blue">{provider.kind}</Tag></div><p>{provider.description}</p><code>{provider.env}</code></div><div className="sd-provider-actions"><Toggle id={'provider-' + provider.id} labelText="启用" labelA="关闭" labelB="开启" toggled={provider.enabled} onToggle={v => toggleProvider(provider.id, v)} /><Button kind="tertiary" size="sm" onClick={() => void testProvider(provider)}>测试连接</Button></div></article>)}</div>
+            <div className="sd-provider-list">{providers.map(provider => <article className="sd-provider-row" key={provider.id}><div className="sd-provider-icon"><Globe size={21}/></div><div className="sd-provider-main"><div className="sd-provider-title"><strong>{provider.name}</strong><Tag type={provider.configured ? 'green' : 'cool-gray'}>{provider.status}</Tag><Tag type="blue">{provider.kind}</Tag></div><p>{provider.description}</p><code>{provider.env}</code></div><div className="sd-provider-actions"><Toggle id={'provider-' + provider.id} labelText="启用" labelA="关闭" labelB="开启" toggled={provider.enabled} onToggle={v => toggleProvider(provider.id, v)} /><Button kind="tertiary" size="sm" onClick={() => void testProvider(provider)}>测试连接（API 调用可能计费）</Button></div></article>)}</div>
             {settingsStatus && <InlineNotification kind="info" lowContrast title="连接测试结果" subtitle={settingsStatus} onCloseButtonClick={() => setSettingsStatus('')} />}
             <div className="sd-provider-note"><WarningAlt size={18}/><div><strong>供应商能力必须透明</strong><p>国家、语言、时间、域名、精确词组、排除词、分页、流式输出和用量查询按服务商分别声明。未支持的条件不能假装已生效。</p></div></div>
           </div>
