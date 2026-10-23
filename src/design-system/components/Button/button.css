@@ -1,0 +1,90 @@
+/* Uranus Design System Button — compact enterprise-console geometry. */
+.uranus-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--uranus-space-2);
+  min-width: 5rem;
+  border: 1px solid transparent;
+  border-radius: var(--uranus-radius-sm);
+  font-family: var(--uranus-font-family-sans);
+  font-size: var(--uranus-font-size-sm);
+  font-weight: var(--uranus-font-weight-medium);
+  line-height: var(--uranus-line-height-tight);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--uranus-motion-fast) var(--uranus-motion-easing),
+    border-color var(--uranus-motion-fast) var(--uranus-motion-easing),
+    color var(--uranus-motion-fast) var(--uranus-motion-easing);
+}
+
+.uranus-button--sm { min-height: var(--uranus-control-height-sm); padding: 0 var(--uranus-space-3); }
+.uranus-button--md { min-height: var(--uranus-control-height-md); padding: 0 var(--uranus-space-4); }
+.uranus-button--lg { min-height: var(--uranus-control-height-lg); padding: 0 var(--uranus-space-6); }
+
+.uranus-button--primary {
+  color: var(--uranus-color-text-inverse);
+  background: var(--uranus-color-action-primary);
+  border-color: var(--uranus-color-action-primary);
+}
+.uranus-button--primary:hover:not(:disabled) {
+  background: var(--uranus-color-action-primary-hover);
+  border-color: var(--uranus-color-action-primary-hover);
+}
+.uranus-button--primary:active:not(:disabled) {
+  background: var(--uranus-color-action-primary-active);
+  border-color: var(--uranus-color-action-primary-active);
+}
+
+.uranus-button--secondary {
+  color: var(--uranus-color-text-primary);
+  background: transparent;
+  border-color: var(--uranus-color-border-strong);
+}
+.uranus-button--secondary:hover:not(:disabled) {
+  background: var(--uranus-color-surface-hover);
+}
+.uranus-button--tertiary {
+  color: var(--uranus-color-text-link);
+  background: transparent;
+  border-color: transparent;
+}
+.uranus-button--tertiary:hover:not(:disabled) {
+  background: var(--uranus-color-surface-hover);
+}
+.uranus-button--danger {
+  color: var(--uranus-color-text-inverse);
+  background: var(--uranus-color-status-danger);
+  border-color: var(--uranus-color-status-danger);
+}
+.uranus-button--danger:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.uranus-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.uranus-button--full-width { width: 100%; }
+.uranus-button__label { display: inline-flex; align-items: center; }
+.uranus-button__spinner {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: 0 0 auto;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: uranus-button-spin 650ms linear infinite;
+}
+.uranus-button--loading { cursor: progress; }
+
+@keyframes uranus-button-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uranus-button { transition: none; }
+  .uranus-button__spinner { animation-duration: 1400ms; }
+}
