@@ -1,20 +1,26 @@
-# Architecture
+# Uranus-Cortex architecture
+## Scope
+Modular foreign-trade platform from prospect discovery and customer management through advanced product catalog, inquiries/quotations, orders, fulfillment/shipping, operational money records, after-sales, and disputes. Full accounting/general ledger, manufacturing, procurement, and full warehouse management are outside initial core scope.
 
-## Initial foundation
-- **UI:** React + TypeScript, built with Vite.
-- **Design system:** IBM Carbon React components, styles, icons, and tokens.
-- **Runtime:** Cloudflare Worker named `cortex`, serving the SPA assets and a small health endpoint.
-- **Quality:** TypeScript build check and GitHub Actions CI.
-- **Data/auth:** Not configured. No database, authentication, secrets, or business workflows are assumed by this scaffold.
+## Baseline
+React + TypeScript + Vite; existing Cloudflare Worker, Cloudflare Vite plugin, Wrangler; Uranus-owned design system. Supabase is planned but not configured for production.
 
-## Boundaries
-- Prefer Carbon components in `src`; keep domain logic out of generic visual primitives.
-- Keep secrets out of source control.
-- Production bindings, authentication, persistence, and database policy require explicit requirements and separate review.
-- This scaffold is not a claim that production functionality is complete.
+## Incremental structure
+- `src/design-system`: foundations, tokens, controls, themes, patterns.
+- `src/modules`: business modules with explicit ownership.
+- `src/shared`: genuinely cross-cutting utilities.
+- `src/worker.ts`: keep the current entry point unless a reviewed migration is needed.
+- `docs/design-system`, `docs/modules`, `docs/data-model`, `docs/api`, `docs/security`: documentation.
 
-## Follow-up
-1. Confirm product requirements and core journeys.
-2. Define route/navigation and domain boundaries from those requirements.
-3. Choose backend/auth/data details only when required.
-4. Add focused tests and further quality gates as business behavior is introduced.
+This is not a forced monorepo migration. Do not change workspace tooling or move the Worker entry point without separate review.
+
+## Design policy
+Uranus Design System is the product UI contract. Carbon is not mandatory and must not define new UI. Existing Carbon usage is legacy; remove dependencies only after all usages are replaced and verified.
+
+## Domains
+Customer development: discovery, companies, contacts, evidence, research, deduplication, follow-up. Data/integration: connectors, imports, search. Platform: auth, tasks, settings, compliance/audit, analytics. Product/sales: catalog, inquiries, quotations, orders, operational money records. Delivery/service: fulfillment, after-sales, disputes. External providers must be replaceable adapters.
+
+## Invariants
+Quotation-to-order conversion preserves commercial snapshots; orders can have multiple shipment batches; order, fulfillment, and payment states are separate; refunds and dispute resolutions retain audit history; money uses exact decimal/numeric values; AI preserves evidence, confidence, unknowns; review connector API access, licensing, cost, and constraints.
+
+Implement one module at a time, keeping every increment buildable and testable.

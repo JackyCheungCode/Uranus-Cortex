@@ -1,30 +1,21 @@
-# Uranus Cortex
+# Uranus-Cortex
+A modular foreign-trade platform spanning prospect discovery, customer management, advanced product catalog, quotations, orders, fulfillment, operational money records, after-sales, and disputes.
 
-Initial application foundation for the `cortex` Cloudflare Worker, using React, TypeScript, Vite, and IBM Carbon.
-
-## Stack
+## Foundation
 - React + TypeScript + Vite
-- IBM Carbon React components, styles, icons, and design tokens
-- Cloudflare Workers Vite plugin and Wrangler
-- Cloudflare Worker health endpoint at `/api/health`
+- Cloudflare Workers, Cloudflare Vite plugin, Wrangler
+- Uranus Design System: locally owned tokens, controls, patterns, and frontend rules
+- Supabase is planned; this scaffold does not imply production database/auth setup
 
-## Project rules
-Read [AGENTS.md](./AGENTS.md), [Carbon standards](./docs/design/carbon-standards.md), and [architecture](./docs/architecture.md) before changing the UI or runtime configuration.
+The bootstrap still uses legacy IBM Carbon imports. Carbon is no longer mandatory; dependencies will be considered for removal after migration and verification.
 
-## Development
+Read [AGENTS.md](./AGENTS.md), [architecture](./docs/architecture.md), and [Uranus Design System](./docs/design-system/README.md) before UI/runtime changes.
+
 ```bash
 npm install
 npm run dev
-```
-
-## Verify and build
-```bash
 npm run typecheck
 npm run build
-npm run preview
 ```
 
-## Deploy
-The Wrangler configuration is intentionally named `cortex` to match the existing Cloudflare Worker. After reviewing bindings and deployment settings, deploy with `npm run deploy`.
-
-The Worker serves the Vite-built single-page application and responds with JSON at `/api/health`. No Cloudflare bindings, secrets, database, or external services are required by this initial foundation.
+Review Wrangler targets and bindings before deployment. The current Worker serves the SPA and exposes `/api/health`; business workflows, authentication, persistence, and external integrations are not implemented yet.
