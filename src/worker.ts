@@ -132,7 +132,7 @@ export default {
       const missingRates = available.filter(id => { const raw = env[providerCostEnv[id]]; return raw === undefined || raw.trim() === '' || !Number.isFinite(Number(raw)) || Number(raw) < 0; });
       if (missingRates.length) return json({ message: '为防止意外费用，必须先配置所选服务商的每次请求成本估算：' + missingRates.map(id => providerCostEnv[id]).join(', ') + '。请以当前服务商计费规则核实数值；填 0 表示明确确认该调用免费。' }, 503);
       const estimatedCostUsd = available.reduce((sum, id) => sum + Number(env[providerCostEnv[id]]), 0);
-      if (estimatedCostUsd > budget) return json({ message: `预算不足：预计本次搜索至少需要 $\{estimatedCostUsd.toFixed(4)}，任务预算为 $\{budget.toFixed(2)}。未发起任何供应商调用。` }, 402);
+      if (estimatedCostUsd > budget) return json({ message: `预算不足：预计本次搜索至少需要 ${estimatedCostUsd.toFixed(4)}，任务预算为 ${budget.toFixed(2)}。未发起任何供应商调用。` }, 402);
       const countries = Array.isArray(body.countries) ? body.countries : [];
       const country = countries.length === 1 ? String(countries[0]) : countries.length > 1 ? '多地区（未逐条核实）' : '未指定';
       const settled = await Promise.allSettled(available.map(async id => ({ id, items: await callProvider(env, id, query, Math.ceil(limit / available.length)) })));
