@@ -30,7 +30,7 @@ function isProviderId(value: string): value is ProviderId {
 function isAuthorized(request: Request, env: Env) {
   const configured = env.DISCOVERY_API_TOKEN;
   if (!configured) return false;
-  const supplied = request.headers.get('Authorization')?.replace(/^Bearer\\s+/i, '') ?? '';
+  const supplied = request.headers.get('Authorization')?.replace(/^Bearer\s+/i, '') ?? '';
   const encoder = new TextEncoder();
   const expectedBytes = encoder.encode(configured);
   const suppliedBytes = encoder.encode(supplied);
