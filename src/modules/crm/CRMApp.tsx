@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import './crm.css';
 import {
   Add, ArrowDown, ArrowRight, ArrowUp, Calendar, Checkmark, ChevronDown, ChevronLeft,
   ChevronRight, Close, Email, Filter, Grid as GridIcon, Home, Menu, More, Phone,
