@@ -6,6 +6,7 @@ interface Env {
   EXA_API_KEY?: string;
   DATAFORSEO_LOGIN?: string;
   DATAFORSEO_PASSWORD?: string;
+  DISCOVERY_API_TOKEN?: string;
 }
 type ProviderId = 'tavily' | 'brave' | 'serper' | 'exa';
 type SearchResult = { title: string; url: string; domain: string; snippet: string; source: string; country: string; score: number; state: string };
@@ -25,6 +26,18 @@ function json(data: unknown, status = 200) {
 }
 function isProviderId(value: string): value is ProviderId {
   return value in providerEnv;
+}
+function isAuthorized(request: Request, env: Env) {
+  const configured = env.DISCOVERY_API_TOKEN;
+  if (!configured) return false;
+  const supplied = request.headers.get('Authorization')?.replace(/^Bearer\\s+/i, '') ?? '';
+  const encoder = new TextEncoder();
+  const expectedBytes = encoder.encode(configured);
+  const suppliedBytes = encoder.encode(supplied);
+  if (expectedBytes.length !== suppliedBytes.length) return false;
+  let difference = 0;
+  for (let i = 0; i < expectedBytes.length; i++) difference |= expectedBytes[i] ^ suppliedBytes[i];
+  return difference === 0;
 }
 function isConfigured(env: Env, id: ProviderId) {
   return Boolean(env[providerEnv[id]]);
@@ -85,7 +98,7 @@ export default {
     if (url.pathname === '/api/health') {
       return json({ status: 'ok', service: 'cortex', timestamp: new Date().toISOString() });
     }
-    if (url.pathname === '/api/discovery/providers' && request.method === 'GET') {
+    if (url.pathname.startsWith('/api/discovery/') && !isAuthorized(request, env)) {\n      return json({ message: env.DISCOVERY_API_TOKEN ? '需要有效的潜客发现访问令牌。' : '潜客发现 API 尚未启用：请先配置 DISCOVERY_API_TOKEN，并在页面中输入相同令牌。' }, env.DISCOVERY_API_TOKEN ? 401 : 503);\n    }\n    if (url.pathname === '/api/discovery/providers' && request.method === 'GET') {
       return json({ providers: (Object.keys(providerEnv) as ProviderId[]).map(id => ({ id, name: providerName[id], configured: isConfigured(env, id), enabled: isConfigured(env, id) })) });
     }
     const providerTest = url.pathname.match(/^\/api\/discovery\/providers\/([a-z-]+)\/test$/);
