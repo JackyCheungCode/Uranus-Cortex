@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react';
 import {
-  Add, ArrowDown, ArrowRight, ArrowUpRight, Checkmark, ChevronDown, Close, Cloud, Document,
-  Filter, Globe, Launch, Renew, Search, Settings, WarningAlt, WatsonHealthAiResults,
+  ArrowUpRight, Checkmark, Close, Cloud, Document, Globe, Launch, Renew, Search, WarningAlt, WatsonHealthAiResults,
 } from '@carbon/icons-react';
 import {
-  Button, Checkbox, Dropdown, InlineNotification, NumberInput, Select, SelectItem, Tab, TabList,
+  Button, Checkbox, InlineNotification, NumberInput, Select, SelectItem, Tab, TabList,
   TabPanel, TabPanels, Tabs, Tag, TextInput, Tile, Toggle, Tooltip,
 } from '@carbon/react';
 import './search-discovery.css';
@@ -22,10 +21,6 @@ const countries = [
   ['US','美国','🇺🇸'],['GB','英国','🇬🇧'],['DE','德国','🇩🇪'],['FR','法国','🇫🇷'],['NL','荷兰','🇳🇱'],
   ['IT','意大利','🇮🇹'],['ES','西班牙','🇪🇸'],['PL','波兰','🇵🇱'],['JP','日本','🇯🇵'],['KR','韩国','🇰🇷'],
   ['AU','澳大利亚','🇦🇺'],['CA','加拿大','🇨🇦'],['HK','中国香港','🇭🇰'],['TW','中国台湾','🇹🇼'],['MO','中国澳门','🇲🇴'],['CN-MAINLAND','中国大陆','🇨🇳'],
-];
-const exampleResults: Result[] = [
-  { title: 'Wholesale vintage clothing supplier inquiry', url: 'https://example.org/supplier-inquiry', domain: 'example.org', snippet: '页面示例：采购商正在寻找分类二手服装与长期批量供应商。仅作界面演示，不是真实搜索结果。', source: '演示数据', country: '英国', score: 84, state: '待审核' },
-  { title: 'Used clothing importer and textile recycler', url: 'https://example.net/about', domain: 'example.net', snippet: '页面示例：企业介绍中出现进口、分拣与批发业务描述。尚未核实采购意向。', source: '演示数据', country: '德国', score: 61, state: '待审核' },
 ];
 const providersToRun = (providers: Provider[]) => providers.filter(p => p.enabled && p.configured);
 
