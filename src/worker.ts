@@ -9,7 +9,8 @@ interface Env {
 }
 type ProviderId = 'tavily' | 'brave' | 'serper' | 'exa';
 type SearchResult = { title: string; url: string; domain: string; snippet: string; source: string; country: string; score: number; state: string };
-const providerEnv: Record<ProviderId, keyof Env> = {
+type SecretKey = Exclude<keyof Env, 'ASSETS'>;
+const providerEnv: Record<ProviderId, SecretKey> = {
   tavily: 'TAVILY_API_KEY',
   brave: 'BRAVE_SEARCH_API_KEY',
   serper: 'SERPER_API_KEY',
