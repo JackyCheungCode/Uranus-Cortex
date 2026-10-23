@@ -2,25 +2,25 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import App from './App';
 
-describe('App shell', () => {
-  it('renders the application navigation and dashboard', () => {
+describe('Carbon application shell', () => {
+  it('renders a Chinese single-purpose discovery workspace', () => {
     render(<App />);
-    expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Find the right buyers.' })).toBeInTheDocument();
-    expect(screen.getByText(/Mock data only/)).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: '潜客发现渠道' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '搜索引擎发现' })).toBeInTheDocument();
+    expect(screen.getByText(/不會调用真实搜索服务|不会调用真实搜索服务/)).toBeInTheDocument();
   });
 
-  it('navigates to the interactive buyer discovery prototype', () => {
+  it('switches between secondary discovery channels', () => {
     render(<App />);
-    fireEvent.click(screen.getByRole('link', { name: 'Buyer discovery' }));
-    expect(screen.getByRole('heading', { name: 'Buyer discovery' })).toBeInTheDocument();
-    expect(screen.getByLabelText('Core keywords')).toHaveValue('used clothing importer');
+    fireEvent.click(screen.getByRole('link', { name: '企业黄页' }));
+    expect(screen.getByRole('heading', { name: '企业黄页发现' })).toBeInTheDocument();
+    expect(screen.getByText(/该渠道尚未接入/)).toBeInTheDocument();
   });
 
-  it('shows a clear placeholder for future modules', () => {
+  it('updates the structured query preview', () => {
     render(<App />);
-    fireEvent.click(screen.getByRole('link', { name: 'API providers' }));
-    expect(screen.getByRole('heading', { name: 'API providers' })).toBeInTheDocument();
-    expect(screen.getByText(/No real services, credentials, or production data are connected/)).toBeInTheDocument();
+    expect(screen.getByLabelText('核心关键词')).toHaveValue('二手服装 进口商');
+    fireEvent.change(screen.getByLabelText('核心关键词'), { target: { value: '服装批发商' } });
+    expect(screen.getByText(/服装批发商/)).toBeInTheDocument();
   });
 });
