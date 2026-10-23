@@ -148,12 +148,12 @@ export default function SearchDiscoveryPage() {
           </div>
         </TabPanel>
         <TabPanel>
-          <div className="sd-panel sd-provider-panel"><div className="sd-panel-heading"><div><h2>搜索服务商</h2><p>密钥必须存储在 Worker Secret 或服务端密钥库中，不会在浏览器中录入或保存。</p></div><Tag type="cool-gray">适配器架构</Tag></div>
+          <div className="sd-panel sd-provider-panel"><div className="sd-panel-heading"><div><h2>搜索服务商</h2><p>供应商 API Key 仅存于 Worker Secret；页面只输入临时访问令牌，且仅保留在当前页面内存。</p></div><Tag type="cool-gray">适配器架构</Tag></div>
             <div className="sd-access-token"><TextInput id="sd-access-token" type="password" labelText="潜客发现 API 访问令牌" helperText="输入 Cloudflare Worker Secret DISCOVERY_API_TOKEN 的值。令牌只保存在当前页面内存，不写入 localStorage。" value={accessToken} onChange={e => setAccessToken(e.target.value)} /><Button kind="secondary" size="sm" onClick={() => { setProviders(prev => prev.map(p => ({ ...p, status: '待配置', configured: false }))); setSettingsStatus('已清除本页面服务商状态；令牌仅保留在当前页面内存。'); }}>重置连接状态</Button></div>
             <InlineNotification kind="warning" lowContrast title="需要部署端配置密钥" subtitle="在 Cloudflare Worker 中设置相应环境变量后，使用连接测试验证。前端不会显示或保存完整密钥。" />
             <div className="sd-provider-list">{providers.map(provider => <article className="sd-provider-row" key={provider.id}><div className="sd-provider-icon"><Globe size={21}/></div><div className="sd-provider-main"><div className="sd-provider-title"><strong>{provider.name}</strong><Tag type={provider.configured ? 'green' : 'cool-gray'}>{provider.status}</Tag><Tag type="blue">{provider.kind}</Tag></div><p>{provider.description}</p><code>{provider.env}</code><div className="sd-provider-cost">成本估算变量：<code>{provider.costEnv}</code></div></div><div className="sd-provider-actions"><Toggle id={'provider-' + provider.id} labelText="启用" labelA="关闭" labelB="开启" toggled={provider.enabled} onToggle={v => toggleProvider(provider.id, v)} /><Button kind="tertiary" size="sm" onClick={() => void testProvider(provider)}>测试连接（API 调用可能计费）</Button></div></article>)}</div>
             {settingsStatus && <InlineNotification kind="info" lowContrast title="连接测试结果" subtitle={settingsStatus} onCloseButtonClick={() => setSettingsStatus('')} />}
-            <div className="sd-provider-note"><WarningAlt size={18}/><div><strong>供应商能力必须透明</strong><p>国家、语言、时间、域名、精确词组、排除词、分页、流式输出和用量查询按服务商分别声明。未支持的条件不能假装已生效。</p></div></div>
+            <div className="sd-provider-note"><WarningAlt size={18}/><div><strong>供应商能力必须透明</strong><p>当前接口完成基础网页搜索与 URL 去重；国家、语言、时间、域名、精确词组、排除词等供应商级能力尚未全部适配。完成能力矩阵和逐项测试前，不应假设这些筛选均在搜索引擎侧生效。</p></div></div>
           </div>
         </TabPanel>
         <TabPanel>
