@@ -50,14 +50,14 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <Header aria-label="Uranus Cortex">
+      <Header aria-label="Uranus Cortex 潜客发现">
         <SkipToContent />
         <HeaderMenuButton
           aria-label="切换导航"
           isActive={navExpanded}
           onClick={() => setNavExpanded((expanded) => !expanded)}
         />
-        <HeaderName href="#main-content" prefix="IBM">Cloud · 潜客发现</HeaderName>
+        <HeaderName href="#main-content" prefix="Uranus">Cortex · 潜客发现</HeaderName>
         <HeaderGlobalBar>
           <Tag type="blue">原型环境</Tag>
           <HeaderGlobalAction aria-label="帮助" tooltipAlignment="end" onClick={() => setActiveChannel('providers')}>
@@ -70,7 +70,7 @@ export default function App() {
       </Header>
 
       <div className="app-frame">
-        <SideNav aria-label="潜客发现渠道" expanded={navExpanded} isFixedNav className="app-sidebar">
+        <SideNav aria-label="潜客发现渠道" expanded={navExpanded} className="app-sidebar">
           <div className="sidebar-product">
             <p className="sidebar-product__eyebrow">工作区</p>
             <p className="sidebar-product__title">潜客发现</p>
