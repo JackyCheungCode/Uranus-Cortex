@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import './crm.css';
+import SearchDiscoveryPage from '../search-discovery/SearchDiscoveryPage';
 import {
   Add, ArrowDown, ArrowRight, ArrowUp, Calendar, Checkmark, ChevronDown, ChevronLeft,
   ChevronRight, Close, Email, Filter, Grid as GridIcon, Home, Menu, OverflowMenuHorizontal, Phone,
@@ -45,10 +46,10 @@ const activityByContact: Record<string, Activity[]> = {
 const statusLabel = (status: Contact['status']) => ({ Qualified: '合格', Working: '跟进中', New: '新建' }[status]);
 const stageLabel = (stage: Stage) => ({ Discovery: '初步沟通', Demo: '产品演示', Proposal: '方案报价', Negotiation: '商务谈判', 'Closed Won': '已成交' }[stage]);
 const money = (n:number) => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
-const navItems = [{id:'contacts',label:'联系人',icon:UserMultiple},{id:'deals',label:'交易',icon:GridIcon},{id:'companies',label:'公司',icon:Home}];
+const navItems = [{id:'contacts',label:'联系人',icon:UserMultiple},{id:'deals',label:'交易',icon:GridIcon},{id:'companies',label:'公司',icon:Home},{id:'discovery',label:'潜客发现',icon:Search}];
 
 export default function CRMApp() {
-  const [page,setPage] = useState<'contacts'|'deals'|'companies'|'foundation'>('contacts');
+  const [page,setPage] = useState<'contacts'|'deals'|'companies'|'foundation'|'discovery'>('contacts');
   const [contacts,setContacts] = useState(contactsSeed);
   const [deals,setDeals] = useState(dealsSeed);
   const [selectedId,setSelectedId] = useState<string|null>(null);
@@ -88,9 +89,10 @@ export default function CRMApp() {
     </aside>
     {mobileNav&&<button className="crm-scrim" aria-label="Close navigation overlay" onClick={()=>setMobileNav(false)}/>}
     <main className="crm-main">
-      <header className="crm-topbar"><button className="crm-icon-button crm-mobile-menu" aria-label="Open navigation" onClick={()=>setMobileNav(true)}><Menu size={20}/></button><div className="crm-breadcrumb"><span>工作空间</span><ChevronRight size={14}/><strong>{page==='contacts'?(selected?'Contact details':'Contacts'):page==='deals'?'Deals':page==='companies'?'Companies':'Platform status'}</strong></div><div className="crm-top-actions"><span className="crm-demo-label"><span/>演示数据</span><button className="crm-icon-button" aria-label="Search contacts" onClick={()=>document.getElementById('crm-search')?.focus()}><Search size={18}/></button><button className="crm-icon-button" aria-label="Notifications" onClick={()=>setNotice('You are all caught up.')}>◌</button><div className="crm-avatar avatar-violet">YU</div></div></header>
+      <header className="crm-topbar"><button className="crm-icon-button crm-mobile-menu" aria-label="Open navigation" onClick={()=>setMobileNav(true)}><Menu size={20}/></button><div className="crm-breadcrumb"><span>工作空间</span><ChevronRight size={14}/><strong>{page==='contacts'?(selected?'联系人详情':'联系人'):page==='deals'?'交易':page==='companies'?'公司':page==='discovery'?'潜客发现':'平台状态'}</strong></div><div className="crm-top-actions"><span className="crm-demo-label"><span/>演示数据</span><button className="crm-icon-button" aria-label="Search contacts" onClick={()=>document.getElementById('crm-search')?.focus()}><Search size={18}/></button><button className="crm-icon-button" aria-label="Notifications" onClick={()=>setNotice('You are all caught up.')}>◌</button><div className="crm-avatar avatar-violet">YU</div></div></header>
       <div className="crm-page">
         {notice&&<div className="crm-notice" role="status">{notice}<button aria-label="Dismiss notice" onClick={()=>setNotice('')}><Close size={14}/></button></div>}
+        {page==='discovery'&&<SearchDiscoveryPage/>}
         {page==='contacts'&&!selected&&<section>
           <div className="crm-page-heading"><div><div className="crm-overline">客户关系</div><h1>联系人</h1><p>管理联系人，让每一次沟通持续推进。</p></div><button className="crm-primary-button" onClick={()=>setShowAdd(true)}><Add size={17}/> 添加联系人</button></div>
           <div className="crm-stats-row"><div className="crm-stat"><span>Total contacts</span><strong>{contacts.length}</strong><small><span className="crm-trend">↗ 12%</span> vs. last month</small></div><div className="crm-stat"><span>Qualified leads</span><strong>{contacts.filter(c=>c.status==='Qualified').length}</strong><small>Ready for a conversation</small></div><div className="crm-stat"><span>Pipeline value</span><strong>{money(totalPipeline)}</strong><small>Across open opportunities</small></div><div className="crm-stat"><span>Active owners</span><strong>3</strong><small>Across your team</small></div></div>
