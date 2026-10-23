@@ -24,7 +24,7 @@ Every control documents purpose, API, variants/sizes, states, keyboard/screen-re
 - A provided visible label is explicitly associated with the input. If a visible label is omitted, callers must provide `aria-label` or `aria-labelledby`; placeholder is not a substitute for a label.
 - Helper and error text are linked with `aria-describedby`; an error sets `aria-invalid` and is exposed through an alert region.
 - Adornments are decorative and hidden from assistive technology; do not put interactive controls inside them.
-- Styling consumes Uranus semantic tokens and preserves native input behavior.
+- Styling consumes Uranus semantic tokens and preserves native input behavior. The visual treatment is underline-only: no surrounding box, with blue focus underline and red validation underline.
 
 ## Verification status
 
