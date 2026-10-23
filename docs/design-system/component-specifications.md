@@ -22,7 +22,7 @@ Every control documents purpose, API, variants/sizes, states, keyboard/screen-re
 - Sizes: `sm`, `md` (default), `lg`; full width is enabled by default.
 - Native `required`, `disabled`, `readOnly`, `type`, `name`, `value`, and `onChange` attributes are supported.
 - A provided visible label is explicitly associated with the input. If a visible label is omitted, callers must provide `aria-label` or `aria-labelledby`; placeholder is not a substitute for a label.
-- Helper and error text are linked with `aria-describedby`; an error sets `aria-invalid` and is announced via a polite visual alert region.
+- Helper and error text are linked with `aria-describedby`; an error sets `aria-invalid` and is exposed through an alert region.
 - Adornments are decorative and hidden from assistive technology; do not put interactive controls inside them.
 - Styling consumes Uranus semantic tokens and preserves native input behavior.
 
