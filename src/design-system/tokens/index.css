@@ -1,0 +1,119 @@
+/* Uranus Design System — semantic tokens
+ * Default theme: light. Components should consume semantic tokens, not raw palette values.
+ * Brand direction: restrained blue, neutral surfaces, precise enterprise layout.
+ */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Primitive palette */
+  --uranus-palette-white: #ffffff;
+  --uranus-palette-black: #161616;
+  --uranus-palette-gray-10: #f4f4f4;
+  --uranus-palette-gray-20: #e0e0e0;
+  --uranus-palette-gray-30: #c6c6c6;
+  --uranus-palette-gray-50: #8d8d8d;
+  --uranus-palette-gray-60: #6f6f6f;
+  --uranus-palette-gray-70: #525252;
+  --uranus-palette-gray-80: #393939;
+  --uranus-palette-gray-90: #262626;
+  --uranus-palette-blue-10: #edf5ff;
+  --uranus-palette-blue-20: #d0e2ff;
+  --uranus-palette-blue-40: #78a9ff;
+  --uranus-palette-blue-50: #4589ff;
+  --uranus-palette-blue-60: #0f62fe;
+  --uranus-palette-blue-70: #0043ce;
+  --uranus-palette-green-60: #198038;
+  --uranus-palette-yellow-30: #f1c21b;
+  --uranus-palette-red-60: #da1e28;
+
+  /* Surfaces and text */
+  --uranus-color-surface-canvas: var(--uranus-palette-gray-10);
+  --uranus-color-surface-primary: var(--uranus-palette-white);
+  --uranus-color-surface-secondary: #fafafa;
+  --uranus-color-surface-raised: var(--uranus-palette-white);
+  --uranus-color-surface-hover: #e8e8e8;
+  --uranus-color-surface-selected: var(--uranus-palette-blue-10);
+  --uranus-color-text-primary: var(--uranus-palette-gray-90);
+  --uranus-color-text-secondary: var(--uranus-palette-gray-70);
+  --uranus-color-text-tertiary: var(--uranus-palette-gray-60);
+  --uranus-color-text-inverse: var(--uranus-palette-white);
+  --uranus-color-text-link: var(--uranus-palette-blue-70);
+
+  /* Actions and status */
+  --uranus-color-action-primary: var(--uranus-palette-blue-60);
+  --uranus-color-action-primary-hover: var(--uranus-palette-blue-70);
+  --uranus-color-action-primary-active: #002d9c;
+  --uranus-color-action-secondary: var(--uranus-palette-gray-80);
+  --uranus-color-focus: var(--uranus-palette-blue-60);
+  --uranus-color-status-success: var(--uranus-palette-green-60);
+  --uranus-color-status-warning: #8a3800;
+  --uranus-color-status-danger: var(--uranus-palette-red-60);
+  --uranus-color-status-info: var(--uranus-palette-blue-70);
+
+  /* Borders and elevation */
+  --uranus-color-border-default: var(--uranus-palette-gray-30);
+  --uranus-color-border-subtle: var(--uranus-palette-gray-20);
+  --uranus-color-border-strong: var(--uranus-palette-gray-60);
+  --uranus-shadow-card: 0 1px 2px rgb(22 22 22 / 8%);
+  --uranus-shadow-overlay: 0 8px 24px rgb(22 22 22 / 16%);
+
+  /* Typography */
+  --uranus-font-family-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --uranus-font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --uranus-font-size-xs: 0.75rem;
+  --uranus-font-size-sm: 0.875rem;
+  --uranus-font-size-md: 1rem;
+  --uranus-font-size-lg: 1.125rem;
+  --uranus-font-size-xl: 1.25rem;
+  --uranus-font-size-2xl: 1.5rem;
+  --uranus-font-size-3xl: 2rem;
+  --uranus-line-height-tight: 1.25;
+  --uranus-line-height-normal: 1.5;
+  --uranus-line-height-relaxed: 1.65;
+  --uranus-font-weight-regular: 400;
+  --uranus-font-weight-medium: 500;
+  --uranus-font-weight-semibold: 600;
+  --uranus-font-weight-bold: 700;
+
+  /* Spacing: 1 unit = 4px */
+  --uranus-space-1: 0.25rem;
+  --uranus-space-2: 0.5rem;
+  --uranus-space-3: 0.75rem;
+  --uranus-space-4: 1rem;
+  --uranus-space-5: 1.25rem;
+  --uranus-space-6: 1.5rem;
+  --uranus-space-8: 2rem;
+  --uranus-space-10: 2.5rem;
+  --uranus-space-12: 3rem;
+  --uranus-space-16: 4rem;
+
+  /* Shape, layout, and motion */
+  --uranus-radius-none: 0;
+  --uranus-radius-sm: 0.125rem;
+  --uranus-radius-md: 0.25rem;
+  --uranus-radius-lg: 0.5rem;
+  --uranus-radius-xl: 0.75rem;
+  --uranus-radius-pill: 9999px;
+  --uranus-control-height-sm: 2rem;
+  --uranus-control-height-md: 2.5rem;
+  --uranus-control-height-lg: 3rem;
+  --uranus-content-max-width: 90rem;
+  --uranus-motion-fast: 120ms;
+  --uranus-motion-normal: 180ms;
+  --uranus-motion-slow: 240ms;
+  --uranus-motion-easing: cubic-bezier(0.2, 0, 0.38, 0.9);
+}
+
+:where(button, input, select, textarea, a, [tabindex]):focus-visible {
+  outline: 2px solid var(--uranus-color-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --uranus-motion-fast: 0ms;
+    --uranus-motion-normal: 0ms;
+    --uranus-motion-slow: 0ms;
+  }
+}
