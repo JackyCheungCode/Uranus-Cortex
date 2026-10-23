@@ -79,7 +79,8 @@ export default function SearchDiscoveryPage() {
       }) });
       const data = await response.json() as { results?: Result[]; message?: string; taskId?: string; estimatedCostUsd?: number };
       if (!response.ok) throw new Error(data.message || '搜索服务请求失败。');
-      setResults(prev => [...(data.results ?? []), ...prev]);\n      setEstimatedCost(data.estimatedCostUsd ?? null);
+      setResults(prev => [...(data.results ?? []), ...prev]);
+      setEstimatedCost(data.estimatedCostUsd ?? null);
       setStatus('completed'); setMessage(data.message || `搜索任务 ${data.taskId ?? ''} 已提交。`);
     } catch (error) {
       setStatus('failed');
