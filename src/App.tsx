@@ -20,7 +20,7 @@ import {
   SkipToContent,
   Tag,
 } from '@carbon/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DiscoveryPage } from './modules/discovery';
 import './styles.css';
 
@@ -44,33 +44,62 @@ const channelDescriptions: Record<DiscoveryChannel, string> = {
   providers: '管理搜索服务连接状态、预算与可用能力。',
 };
 
+const mobileQuery = '(max-width: 48rem)';
+
 export default function App() {
   const [activeChannel, setActiveChannel] = useState<DiscoveryChannel>('search');
   const [navExpanded, setNavExpanded] = useState(true);
+
+  useEffect(() => {
+    const media = window.matchMedia(mobileQuery);
+    const syncNavigation = () => setNavExpanded(!media.matches);
+    syncNavigation();
+    media.addEventListener('change', syncNavigation);
+    return () => media.removeEventListener('change', syncNavigation);
+  }, []);
+
+  const selectChannel = (id: DiscoveryChannel) => {
+    setActiveChannel(id);
+    if (window.matchMedia(mobileQuery).matches) setNavExpanded(false);
+  };
 
   return (
     <div className="app-shell">
       <Header aria-label="Uranus Cortex 潜客发现">
         <SkipToContent />
         <HeaderMenuButton
-          aria-label="切换导航"
+          aria-label={navExpanded ? '关闭导航' : '打开导航'}
+          aria-expanded={navExpanded}
           isActive={navExpanded}
           onClick={() => setNavExpanded((expanded) => !expanded)}
         />
         <HeaderName href="#main-content" prefix="Uranus">Cortex · 潜客发现</HeaderName>
         <HeaderGlobalBar>
           <Tag type="blue">原型环境</Tag>
-          <HeaderGlobalAction aria-label="帮助" tooltipAlignment="end" onClick={() => setActiveChannel('providers')}>
+          <HeaderGlobalAction aria-label="帮助" tooltipAlignment="end" onClick={() => selectChannel('providers')}>
             <Help size={20} />
           </HeaderGlobalAction>
-          <HeaderGlobalAction aria-label="搜索服务设置" tooltipAlignment="end" onClick={() => setActiveChannel('providers')}>
+          <HeaderGlobalAction aria-label="搜索服务设置" tooltipAlignment="end" onClick={() => selectChannel('providers')}>
             <Settings size={20} />
           </HeaderGlobalAction>
         </HeaderGlobalBar>
       </Header>
 
       <div className="app-frame">
-        <SideNav aria-label="潜客发现渠道" expanded={navExpanded} className="app-sidebar">
+        {navExpanded && (
+          <button
+            className="mobile-nav-backdrop"
+            type="button"
+            aria-label="关闭导航菜单"
+            onClick={() => setNavExpanded(false)}
+          />
+        )}
+        <SideNav
+          aria-label="潜客发现渠道"
+          expanded={navExpanded}
+          className="app-sidebar"
+          isPersistent={!window.matchMedia(mobileQuery).matches}
+        >
           <div className="sidebar-product">
             <p className="sidebar-product__eyebrow">工作区</p>
             <p className="sidebar-product__title">潜客发现</p>
@@ -86,7 +115,7 @@ export default function App() {
                 aria-current={activeChannel === id ? 'page' : undefined}
                 onClick={(event) => {
                   event.preventDefault();
-                  setActiveChannel(id);
+                  selectChannel(id);
                 }}
               >
                 {label}
