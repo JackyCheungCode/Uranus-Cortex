@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ArrowUpRight, Checkmark, Close, Cloud, Document, Globe, Launch, Renew, Search, WarningAlt, WatsonHealthAiResults,
 } from '@carbon/icons-react';
@@ -50,17 +50,7 @@ export default function SearchDiscoveryPage() {
   const [filterStatus, setFilterStatus] = useState('全部状态');
   const [settingsStatus, setSettingsStatus] = useState('');\n  const [accessToken, setAccessToken] = useState('');
   const readyProviders = useMemo(() => providersToRun(providers), [providers]);
-  useEffect(() => {
-    let active = true;
-    void fetch('/api/discovery/providers', { headers: { Authorization: 'Bearer ' + accessToken } }).then(response => response.ok ? response.json() as Promise<{ providers?: Array<{ id: string; configured: boolean }> }> : Promise.reject(new Error('provider status unavailable'))).then(data => {
-      if (!active) return;
-      setProviders(prev => prev.map(provider => {
-        const server = data.providers?.find(item => item.id === provider.id);
-        return server ? { ...provider, configured: server.configured, status: server.configured ? '已配置，待测试' : '待配置' } : provider;
-      }));
-    }).catch(() => { /* Keep an unverified state if the API is unavailable. */ });
-    return () => { active = false; };
-  }, [accessToken]);
+
 
   const selectedCountryNames = countries.filter(c => selectedCountries.includes(c[0])).map(c => c[1]);
   const normalizedQuery = queryMode ? rawQuery : [keywords, product, buyerType, selectedCountryNames.join(' '), language !== 'any' ? 'lang:' + language : '', exclude ? '-(' + exclude + ')' : '', includeDomains ? 'site:' + includeDomains : ''].filter(Boolean).join(' ');
