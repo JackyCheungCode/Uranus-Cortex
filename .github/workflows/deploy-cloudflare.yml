@@ -5,18 +5,12 @@ on:
     branches:
       - foundation/carbon-governance
   workflow_dispatch:
-    inputs:
-      confirm_target:
-        description: 'Type uranus-cortex to confirm the deployment target'
-        required: true
-        type: string
 
 permissions:
   contents: read
 
 jobs:
   deploy:
-    if: ${{ inputs.confirm_target == 'uranus-cortex' }}
     runs-on: ubuntu-latest
     environment: production
     steps:
