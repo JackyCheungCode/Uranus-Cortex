@@ -7,6 +7,10 @@ interface Env {
   DATAFORSEO_LOGIN?: string;
   DATAFORSEO_PASSWORD?: string;
   DISCOVERY_API_TOKEN?: string;
+  TAVILY_COST_PER_CALL_USD?: string;
+  BRAVE_COST_PER_CALL_USD?: string;
+  SERPER_COST_PER_CALL_USD?: string;
+  EXA_COST_PER_CALL_USD?: string;
 }
 type ProviderId = 'tavily' | 'brave' | 'serper' | 'exa';
 type SearchResult = { title: string; url: string; domain: string; snippet: string; source: string; country: string; score: number; state: string };
@@ -17,6 +21,7 @@ const providerEnv: Record<ProviderId, SecretKey> = {
   serper: 'SERPER_API_KEY',
   exa: 'EXA_API_KEY',
 };
+const providerCostEnv: Record<ProviderId, keyof Env> = { tavily: 'TAVILY_COST_PER_CALL_USD', brave: 'BRAVE_COST_PER_CALL_USD', serper: 'SERPER_COST_PER_CALL_USD', exa: 'EXA_COST_PER_CALL_USD' };
 const providerName: Record<ProviderId, string> = {
   tavily: 'Tavily', brave: 'Brave Search API', serper: 'Serper.dev', exa: 'Exa',
 };
@@ -122,8 +127,14 @@ export default {
       const available = [...new Set(requested)].filter(id => isConfigured(env, id));
       if (!available.length) return json({ message: '没有可用的已配置搜索服务商。请在 Cloudflare Worker Secrets 中配置 Tavily、Brave、Serper 或 Exa API Key。' }, 400);
       const limit = typeof body.limit === 'number' && Number.isFinite(body.limit) ? Math.max(1, Math.min(100, Math.floor(body.limit))) : 20;
+      const budget = typeof body.budget === 'number' && Number.isFinite(body.budget) ? Math.max(0, body.budget) : 0;
+      if (budget <= 0) return json({ message: '请设置大于 0 的任务预算上限。' }, 400);
+      const missingRates = available.filter(id => { const raw = env[providerCostEnv[id]]; return raw === undefined || raw.trim() === '' || !Number.isFinite(Number(raw)) || Number(raw) < 0; });
+      if (missingRates.length) return json({ message: '为防止意外费用，必须先配置所选服务商的每次请求成本估算：' + missingRates.map(id => providerCostEnv[id]).join(', ') + '。请以当前服务商计费规则核实数值；填 0 表示明确确认该调用免费。' }, 503);
+      const estimatedCostUsd = available.reduce((sum, id) => sum + Number(env[providerCostEnv[id]]), 0);
+      if (estimatedCostUsd > budget) return json({ message: `预算不足：预计本次搜索至少需要 $\{estimatedCostUsd.toFixed(4)}，任务预算为 $\{budget.toFixed(2)}。未发起任何供应商调用。` }, 402);
       const countries = Array.isArray(body.countries) ? body.countries : [];
-      const country = countries.length ? String(countries[0]) : '未指定';
+      const country = countries.length === 1 ? String(countries[0]) : countries.length > 1 ? '多地区（未逐条核实）' : '未指定';
       const settled = await Promise.allSettled(available.map(async id => ({ id, items: await callProvider(env, id, query, Math.ceil(limit / available.length)) })));
       const results: SearchResult[] = [];
       const errors: string[] = [];
@@ -133,7 +144,7 @@ export default {
       }
       const unique = [...new Map(results.map(result => [result.url, result])).values()].slice(0, limit);
       if (!unique.length && errors.length) return json({ message: errors.join('；'), taskId: crypto.randomUUID(), results: [] }, 502);
-      return json({ taskId: crypto.randomUUID(), results: unique, message: errors.length ? `已返回部分结果；部分服务失败：${errors.join('；')}` : `已完成 ${available.length} 个搜索服务的实时检索，返回 ${unique.length} 条去重网页结果。未将结果自动写入 CRM。`, warnings: errors });
+      return json({ taskId: crypto.randomUUID(), results: unique, estimatedCostUsd, message: errors.length ? `已返回部分结果；估算调用成本 ${estimatedCostUsd.toFixed(4)}；部分服务失败：${errors.join('；')}` : `已完成 ${available.length} 个搜索服务的实时检索，返回 ${unique.length} 条去重网页结果。估算调用成本 ${estimatedCostUsd.toFixed(4)}；结果尚未持久化，也未自动写入 CRM。`, warnings: errors });
     }
     return env.ASSETS.fetch(request);
   },
