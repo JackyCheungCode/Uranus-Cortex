@@ -103,7 +103,10 @@ export default {
     if (url.pathname === '/api/health') {
       return json({ status: 'ok', service: 'cortex', timestamp: new Date().toISOString() });
     }
-    if (url.pathname.startsWith('/api/discovery/') && !isAuthorized(request, env)) {\n      return json({ message: env.DISCOVERY_API_TOKEN ? '需要有效的潜客发现访问令牌。' : '潜客发现 API 尚未启用：请先配置 DISCOVERY_API_TOKEN，并在页面中输入相同令牌。' }, env.DISCOVERY_API_TOKEN ? 401 : 503);\n    }\n    if (url.pathname === '/api/discovery/providers' && request.method === 'GET') {
+    if (url.pathname.startsWith('/api/discovery/') && !isAuthorized(request, env)) {
+      return json({ message: env.DISCOVERY_API_TOKEN ? '需要有效的潜客发现访问令牌。' : '潜客发现 API 尚未启用：请先配置 DISCOVERY_API_TOKEN，并在页面中输入相同令牌。' }, env.DISCOVERY_API_TOKEN ? 401 : 503);
+    }
+    if (url.pathname === '/api/discovery/providers' && request.method === 'GET') {
       return json({ providers: (Object.keys(providerEnv) as ProviderId[]).map(id => ({ id, name: providerName[id], configured: isConfigured(env, id), enabled: isConfigured(env, id) })) });
     }
     const providerTest = url.pathname.match(/^\/api\/discovery\/providers\/([a-z-]+)\/test$/);
