@@ -114,7 +114,7 @@ export default function SearchDiscoveryPage() {
       <Tile><span className="sd-stat-label">发现网页</span><strong>{results.length}</strong><small>仅计入本次页面会话</small></Tile>
       <Tile><span className="sd-stat-label">待审核企业</span><strong>{results.filter(r => r.state === '待审核').length}</strong><small>需验证企业身份与采购信号</small></Tile>
       <Tile><span className="sd-stat-label">已确认潜客</span><strong>{results.filter(r => r.state === '已确认').length}</strong><small>人工确认后再进入 CRM</small></Tile>
-      <Tile><span className="sd-stat-label">本次估算成本</span><strong>{estimatedCost === null ? '—' : '</Tile>
+      <Tile><span className="sd-stat-label">本次估算成本</span><strong>{estimatedCost === null ? '—' : '$' + estimatedCost.toFixed(4)}</strong><small>本次搜索估算调用成本，不是供应商最终账单</small></Tile>
     </div>
     <Tabs selectedIndex={tab} onChange={({ selectedIndex }) => setTab(selectedIndex)}>
       <TabList aria-label="潜客发现模块导航" contained>
