@@ -1,103 +1,92 @@
 import {
-  Activity,
   Api,
-  CheckmarkFilled,
-  Dashboard,
+  DataBase,
+  Globe,
+  Help,
   Search,
   Settings,
   UserMultiple,
+  Upload,
 } from '@carbon/icons-react';
-import { Header, HeaderGlobalBar, HeaderMenuButton, HeaderName, SideNav, SideNavItems, SideNavLink, SkipToContent, Tag, Tile } from '@carbon/react';
+import {
+  Header,
+  HeaderGlobalAction,
+  HeaderGlobalBar,
+  HeaderMenuButton,
+  HeaderName,
+  SideNav,
+  SideNavItems,
+  SideNavLink,
+  SkipToContent,
+  Tag,
+} from '@carbon/react';
 import { useState } from 'react';
-import { DashboardPage } from './modules/dashboard';
 import { DiscoveryPage } from './modules/discovery';
 import './styles.css';
 
-type PageId = 'dashboard' | 'discovery' | 'buyers' | 'crm' | 'integrations' | 'settings';
+export type DiscoveryChannel = 'search' | 'directories' | 'customs' | 'social' | 'import' | 'providers';
 
-const navigation: Array<{ id: PageId; label: string; icon: typeof Dashboard }> = [
-  { id: 'dashboard', label: 'Overview', icon: Dashboard },
-  { id: 'discovery', label: 'Buyer discovery', icon: Search },
-  { id: 'buyers', label: 'Buyer profiles', icon: UserMultiple },
-  { id: 'crm', label: 'CRM pipeline', icon: Activity },
-  { id: 'integrations', label: 'API providers', icon: Api },
-  { id: 'settings', label: 'Settings', icon: Settings },
+const channels: Array<{ id: DiscoveryChannel; label: string; icon: typeof Search }> = [
+  { id: 'search', label: '搜索引擎', icon: Search },
+  { id: 'directories', label: '企业黄页', icon: Globe },
+  { id: 'customs', label: '海关数据', icon: DataBase },
+  { id: 'social', label: '社交媒体', icon: UserMultiple },
+  { id: 'import', label: '导入名单', icon: Upload },
+  { id: 'providers', label: '搜索服务设置', icon: Api },
 ];
 
-const pageTitles: Record<PageId, string> = {
-  dashboard: 'Overview',
-  discovery: 'Buyer discovery',
-  buyers: 'Buyer profiles',
-  crm: 'CRM pipeline',
-  integrations: 'API providers',
-  settings: 'Settings',
+const channelDescriptions: Record<DiscoveryChannel, string> = {
+  search: '通过公开网页与采购信号发现潜在采购商。',
+  directories: '从企业目录、行业名录和商会目录整理候选企业。',
+  customs: '为未来的合规海关数据连接预留工作区。',
+  social: '整理公开商务主页和企业社交资料中的线索。',
+  import: '导入 CSV / Excel 名单，映射字段并检查重复项。',
+  providers: '管理搜索服务连接状态、预算与可用能力。',
 };
 
-function ComingSoonPage({ page }: { page: Exclude<PageId, 'dashboard' | 'discovery'> }) {
-  const descriptions: Record<typeof page, string> = {
-    buyers: 'Review qualified companies, evidence, public contact details, and buyer-fit signals.',
-    crm: 'Organize reviewed prospects into a clear follow-up workflow.',
-    integrations: 'Configure search providers and manage connection status in a future secure backend.',
-    settings: 'Manage workspace preferences and application behavior.',
-  };
-
-  return (
-    <section className="placeholder-page" aria-labelledby="placeholder-title">
-      <div className="page-heading">
-        <div>
-          <p className="eyebrow">WORKSPACE</p>
-          <h1 id="placeholder-title">{pageTitles[page]}</h1>
-          <p className="page-description">{descriptions[page]}</p>
-        </div>
-        <Tag type="cool-gray">Frontend prototype</Tag>
-      </div>
-      <Tile className="placeholder-tile">
-        <div className="placeholder-tile__icon"><CheckmarkFilled size={20} aria-hidden="true" /></div>
-        <h2>Designed for the next implementation phase</h2>
-        <p>This area is a documented placeholder. No real services, credentials, or production data are connected.</p>
-      </Tile>
-    </section>
-  );
-}
-
 export default function App() {
-  const [activePage, setActivePage] = useState<PageId>('dashboard');
-  const [mobileNavOpen, setMobileNavOpen] = useState(true);
-  const activeLabel = pageTitles[activePage];
+  const [activeChannel, setActiveChannel] = useState<DiscoveryChannel>('search');
+  const [navExpanded, setNavExpanded] = useState(true);
 
   return (
     <div className="app-shell">
       <Header aria-label="Uranus Cortex">
         <SkipToContent />
-        <HeaderName href="#main-content" prefix="URANUS">Cortex</HeaderName>
+        <HeaderMenuButton
+          aria-label="切换导航"
+          isActive={navExpanded}
+          onClick={() => setNavExpanded((expanded) => !expanded)}
+        />
+        <HeaderName href="#main-content" prefix="IBM">Cloud · 潜客发现</HeaderName>
         <HeaderGlobalBar>
-          <Tag type="blue">Prototype</Tag>
-          <HeaderMenuButton
-            aria-label="Toggle navigation"
-            isActive={mobileNavOpen}
-            onClick={() => setMobileNavOpen((open) => !open)}
-          />
+          <Tag type="blue">原型环境</Tag>
+          <HeaderGlobalAction aria-label="帮助" tooltipAlignment="end" onClick={() => setActiveChannel('providers')}>
+            <Help size={20} />
+          </HeaderGlobalAction>
+          <HeaderGlobalAction aria-label="搜索服务设置" tooltipAlignment="end" onClick={() => setActiveChannel('providers')}>
+            <Settings size={20} />
+          </HeaderGlobalAction>
         </HeaderGlobalBar>
       </Header>
 
       <div className="app-frame">
-        <SideNav
-          aria-label="Main navigation"
-          expanded={mobileNavOpen}
-          isFixedNav
-          className="app-sidebar"
-        >
+        <SideNav aria-label="潜客发现渠道" expanded={navExpanded} isFixedNav className="app-sidebar">
+          <div className="sidebar-product">
+            <p className="sidebar-product__eyebrow">工作区</p>
+            <p className="sidebar-product__title">潜客发现</p>
+            <p className="sidebar-product__description">多渠道采购商线索研究</p>
+          </div>
           <SideNavItems>
-            {navigation.map(({ id, label, icon: Icon }) => (
+            {channels.map(({ id, label, icon: Icon }) => (
               <SideNavLink
                 key={id}
                 href={`#${id}`}
                 renderIcon={Icon}
-                isActive={activePage === id}
-                aria-current={activePage === id ? 'page' : undefined}
+                isActive={activeChannel === id}
+                aria-current={activeChannel === id ? 'page' : undefined}
                 onClick={(event) => {
                   event.preventDefault();
-                  setActivePage(id);
+                  setActiveChannel(id);
                 }}
               >
                 {label}
@@ -105,22 +94,18 @@ export default function App() {
             ))}
           </SideNavItems>
           <div className="sidebar-footer">
-            <div className="environment-indicator"><span aria-hidden="true" /> Mock environment</div>
-            <p>Frontend phase · No live services</p>
+            <div className="environment-indicator"><span aria-hidden="true" /> 模拟数据环境</div>
+            <p>尚未连接真实搜索服务</p>
           </div>
         </SideNav>
 
-        <main id="main-content" className="main-content" aria-label="Uranus Cortex application">
+        <main id="main-content" className="main-content" aria-label="潜客发现工作区">
           <div className="content-topline">
-            <span>Workspace</span><span aria-hidden="true">/</span><strong>{activeLabel}</strong>
+            <span>工作区</span><span aria-hidden="true">/</span><strong>{channels.find((channel) => channel.id === activeChannel)?.label}</strong>
           </div>
-          {activePage === 'dashboard' && <DashboardPage onOpenDiscovery={() => setActivePage('discovery')} />}
-          {activePage === 'discovery' && <DiscoveryPage />}
-          {(['buyers', 'crm', 'integrations', 'settings'] as const).includes(activePage as 'buyers' | 'crm' | 'integrations' | 'settings') && (
-            <ComingSoonPage page={activePage as 'buyers' | 'crm' | 'integrations' | 'settings'} />
-          )}
+          <DiscoveryPage channel={activeChannel} description={channelDescriptions[activeChannel]} />
           <footer className="app-footer">
-            <span>Uranus Cortex</span><span>Carbon-first frontend prototype</span>
+            <span>Uranus Cortex</span><span>基于 IBM Carbon 的前端原型 · 未连接真实服务</span>
           </footer>
         </main>
       </div>
