@@ -21,6 +21,7 @@ import {
   Tag,
 } from '@carbon/react';
 import { useEffect, useState } from 'react';
+import { LoginPage } from './modules/auth/LoginPage';
 import { DiscoveryPage } from './modules/discovery';
 import './styles.css';
 
@@ -47,6 +48,7 @@ const channelDescriptions: Record<DiscoveryChannel, string> = {
 const mobileQuery = '(max-width: 48rem)';
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeChannel, setActiveChannel] = useState<DiscoveryChannel>('search');
   const [navExpanded, setNavExpanded] = useState(true);
 
@@ -63,9 +65,13 @@ export default function App() {
     if (window.matchMedia(mobileQuery).matches) setNavExpanded(false);
   };
 
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
+  }
+
   return (
     <div className="app-shell">
-      <Header aria-label="Uranus Cortex 潜客发现">
+      <Header aria-label="Uranus-Cortex 潜客发现">
         <SkipToContent />
         <HeaderMenuButton
           aria-label={navExpanded ? '关闭导航' : '打开导航'}
@@ -134,7 +140,7 @@ export default function App() {
           </div>
           <DiscoveryPage channel={activeChannel} description={channelDescriptions[activeChannel]} />
           <footer className="app-footer">
-            <span>Uranus Cortex</span><span>基于 IBM Carbon 的前端原型 · 未连接真实服务</span>
+            <span>Uranus-Cortex</span><span>基于 IBM Carbon 的前端原型 · 未连接真实服务</span>
           </footer>
         </main>
       </div>
