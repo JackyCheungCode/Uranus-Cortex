@@ -1,6 +1,9 @@
 name: Deploy Cloudflare Worker
 
 on:
+  push:
+    branches:
+      - foundation/carbon-governance
   workflow_dispatch:
     inputs:
       confirm_target:
